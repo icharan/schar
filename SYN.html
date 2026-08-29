@@ -1,0 +1,231 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNOP Gmail Sender</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f6fa;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 650px;
+            margin: 40px auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a4d7a;
+            margin-bottom: 25px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            padding: 16px 8px;
+            border: none;
+            border-radius: 7px;
+            background: #1976d2;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d47a1;
+        }
+
+        /* PPBB buttons */
+        .ppbb-button {
+            background: #388e3c;
+        }
+
+        .ppbb-button:hover {
+            background: #1b5e20;
+        }
+
+        @media (max-width: 500px) {
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>SYNOP Gmail Sender</h2>
+
+    <div class="buttons">
+
+        <!-- SYNOP BUTTONS -->
+        <button onclick="openGmail('00')">00Z</button>
+        <button onclick="openGmail('03')">03Z</button>
+
+        <button onclick="openGmail('06')">06Z</button>
+        <button onclick="openGmail('09')">09Z</button>
+
+        <button onclick="openGmail('12')">12Z</button>
+        <button onclick="openGmail('15')">15Z</button>
+
+        <button onclick="openGmail('18')">18Z</button>
+        <button onclick="openGmail('21')">21Z</button>
+
+        <!-- PPBB BUTTONS -->
+        <button class="ppbb-button" onclick="openPPBB('06')">
+            06Z LOW CLOUDS
+        </button>
+
+        <button class="ppbb-button" onclick="openPPBB('18')">
+            18Z NO LANTERNS
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Get today's date as DD.MM.YYYY
+    function getTodayDate() {
+
+        const today = new Date();
+
+        const day =
+            String(today.getDate()).padStart(2, '0');
+
+        const month =
+            String(today.getMonth() + 1).padStart(2, '0');
+
+        const year =
+            today.getFullYear();
+
+        return `${day}.${month}.${year}`;
+    }
+
+
+    // =========================
+    // SYNOP GMAIL
+    // =========================
+    function openGmail(observationTime) {
+
+        const today = new Date();
+
+        const day =
+            String(today.getDate()).padStart(2, '0');
+
+        const date =
+            getTodayDate();
+
+        // SYNOP YYGGi
+        const synopHeader =
+            `AAXX ${day}${observationTime}4`;
+
+        const synopData =
+            `43150  =`;
+
+        const body =
+            synopHeader + "\n" + synopData;
+
+        // Recipients
+        const recipients =
+            "amsschennai@gmail.com," +
+            "apdata2021@gmail.com," +
+            "MCAMARAVATI.WS@imd.gov.in";
+
+        // Subject
+        const subject =
+            `${observationTime}Z SYNOP OF CWCVSK (43150) DATED ${date}`;
+
+        // Gmail URL
+        const gmailURL =
+            "https://mail.google.com/mail/?" +
+            "view=cm" +
+            "&fs=1" +
+            "&to=" + encodeURIComponent(recipients) +
+            "&su=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+
+        window.open(gmailURL, "_blank");
+    }
+
+
+    // =========================
+    // PPBB GMAIL
+    // =========================
+    function openPPBB(observationTime) {
+
+        const today = new Date();
+
+        // Today's day
+        const day =
+            String(today.getDate()).padStart(2, '0');
+
+        // Today's date
+        const date =
+            getTodayDate();
+
+        let reason;
+
+        if (observationTime === "06") {
+
+            reason =
+                "NO ASCENT DUE TO LOW CLOUDS";
+
+        } else {
+
+            reason =
+                "NO ASCENT DUE TO NO LANTERENS";
+        }
+
+        // PPBB message - EXACTLY TWO LINES
+        const body =
+            `PPBB ${day}${observationTime}/\n` +
+            `43150 900// <b>00000</b> ${reason}=`;
+
+        // Recipients
+        const recipients =
+            "amsschennai@gmail.com," +
+            "apdata2021@gmail.com," +
+            "MCAMARAVATI.WS@imd.gov.in";
+
+        // Subject
+        const subject =
+            `${observationTime}Z PILOT OF CWCVSK (43150) DATED ${date}`;
+
+        // Gmail URL
+        const gmailURL =
+            "https://mail.google.com/mail/?" +
+            "view=cm" +
+            "&fs=1" +
+            "&to=" + encodeURIComponent(recipients) +
+            "&su=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+
+        window.open(gmailURL, "_blank");
+    }
+
+</script>
+
+</body>
+</html>
+```
