@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +59,22 @@
             background: #1b5e20;
         }
 
+        .report-button {
+            background: #1565c0;
+        }
+
+        .report-button:hover {
+            background: #0d47a1;
+        }
+
+        .synop-pilot-button {
+            background: #8e24aa;
+        }
+
+        .synop-pilot-button:hover {
+            background: #6a1b9a;
+        }
+
         .footer {
             position: fixed;
             right: 15px;
@@ -90,16 +107,22 @@
 
     <div class="buttons">
 
+        <!-- SYNOP BUTTONS -->
+
         <button onclick="openGmail('00')">00Z</button>
+
         <button onclick="openGmail('03')">03Z</button>
 
         <button onclick="openGmail('06')">06Z</button>
+
         <button onclick="openGmail('09')">09Z</button>
 
         <button onclick="openGmail('12')">12Z</button>
+
         <button onclick="openGmail('15')">15Z</button>
 
         <button onclick="openGmail('18')">18Z</button>
+
         <button onclick="openGmail('21')">21Z</button>
 
         <button class="ppbb-button" onclick="openPPBB('06')">
@@ -110,116 +133,216 @@
             18Z NO LANTERNS
         </button>
 
+
+
+        <button class="synop-pilot-button" onclick="openSynopPilot('06')">
+            06Z & PILOT
+        </button>
+
+        <button class="synop-pilot-button" onclick="openSynopPilot('18')">
+            18Z & PILOT
+        </button>
+
+
+ 
+
+        <button class="report-button" onclick="openDailyWeatherParameters()">
+            DAILY WEATHER PARAMETERS
+        </button>
+
+        <button class="report-button" onclick="openHWSRData()">
+            HWSR DATA
+        </button>
+
     </div>
 
 </div>
+
 
 <div class="footer">
     <i><b>Charan</b></i>
 </div>
 
+
 <script>
+
+
 
     function getTodayDate() {
 
         const today = new Date();
 
-        const day =
-            String(today.getDate()).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
 
-        const month =
-            String(today.getMonth() + 1).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
 
-        const year =
-            today.getFullYear();
+        const year = today.getFullYear();
 
         return `${day}.${month}.${year}`;
     }
+
+
+
+
+    function openCompose(recipients, subject, body) {
+
+        const gmailURL =
+            "https://mail.google.com/mail/?" +
+            "view=cm" +
+            "&fs=1" +
+            "&to=" + encodeURIComponent(recipients) +
+            "&su=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+
+        window.open(gmailURL, "_blank");
+    }
+
+
+
 
     function openGmail(observationTime) {
 
         const today = new Date();
 
-        const day =
-            String(today.getDate()).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
 
-        const date =
-            getTodayDate();
-
-        const synopHeader =
-            `AAXX ${day}${observationTime}4`;
-
-        const synopData =
-            `43150  =`;
+        const date = getTodayDate();
 
         const body =
-            synopHeader + "\n" + synopData;
+            `AAXX ${day}${observationTime}4\n43150  =`;
 
         const recipients =
-            "amsschennai@gmail.com," +
-            "apdata2021@gmail.com," +
-            "MCAMARAVATI.WS@imd.gov.in";
+            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
 
         const subject =
             `${observationTime}Z SYNOP OF CWCVSK (43150) DATED ${date}`;
 
-        const gmailURL =
-            "https://mail.google.com/mail/?" +
-            "view=cm" +
-            "&fs=1" +
-            "&to=" + encodeURIComponent(recipients) +
-            "&su=" + encodeURIComponent(subject) +
-            "&body=" + encodeURIComponent(body);
-
-        window.open(gmailURL, "_blank");
+        openCompose(
+            recipients,
+            subject,
+            body
+        );
     }
+
+
 
     function openPPBB(observationTime) {
 
         const today = new Date();
 
-        const day =
-            String(today.getDate()).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
 
-        const date =
-            getTodayDate();
+        const date = getTodayDate();
 
-        let reason;
-
-        if (observationTime === "06") {
-
-            reason =
-                "NO ASCENT DUE TO LOW CLOUDS";
-
-        } else {
-
-            reason =
-                "NO ASCENT DUE TO NO LANTERENS";
-        }
+        const reason =
+            observationTime === "06"
+                ? "NO ASCENT DUE TO LOW CLOUDS"
+                : "NO ASCENT DUE TO NO LANTERENS";
 
         const body =
-            `PPBB ${day}${observationTime}/\n` +
-            `43150 900// <strong>00000</strong> ${reason}=`;
+            `PPBB ${day}${observationTime}/\n43150 900// 00000 ${reason}=`;
 
         const recipients =
-            "amsschennai@gmail.com," +
-            "apdata2021@gmail.com," +
-            "MCAMARAVATI.WS@imd.gov.in";
+            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
+
         const subject =
             `${observationTime}Z PILOT OF CWCVSK (43150) DATED ${date}`;
 
-        const gmailURL =
-            "https://mail.google.com/mail/?" +
-            "view=cm" +
-            "&fs=1" +
-            "&to=" + encodeURIComponent(recipients) +
-            "&su=" + encodeURIComponent(subject) +
-            "&body=" + encodeURIComponent(body);
+        openCompose(
+            recipients,
+            subject,
+            body
+        );
+    }
 
-        window.open(gmailURL, "_blank");
+
+
+    function openSynopPilot(observationTime) {
+
+        const today = new Date();
+
+        const day = String(today.getDate()).padStart(2, '0');
+
+        const date = getTodayDate();
+
+        const recipients =
+            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
+
+
+        if (observationTime === "06") {
+
+            const body =
+                `AAXX ${day}${observationTime}4
+43150
+
+PPBB ${day}06/
+43150 900// 00000 NO ASCENT DUE TO LOW CLOUDS=`;
+
+            const subject =
+                `06Z SYNOP & PILOT OF CWCVSK (43150) DATED ${date}`;
+
+            openCompose(
+                recipients,
+                subject,
+                body
+            );
+        }
+
+
+
+
+        else if (observationTime === "18") {
+
+            const body =
+                `AAXX ${day}${observationTime}4
+43150
+
+PPBB ${day}18/
+43150 900// 00000 NO ASCENT DUE TO NO LANTERENS=`;
+
+            const subject =
+                `18Z SYNOP & PILOT OF CWCVSK (43150) DATED ${date}`;
+
+            openCompose(
+                recipients,
+                subject,
+                body
+            );
+        }
+    }
+
+
+    /* ================================
+       DAILY WEATHER PARAMETERS
+       ================================ */
+
+    function openDailyWeatherParameters() {
+
+        const subject =
+            `DAILY WEATHER PARAMETERS OF CWC VSK DATED ${getTodayDate()}`;
+
+        openCompose(
+            "cwcvsk@gmail.com",
+            subject,
+            "KFA=="
+        );
+    }
+
+
+    function openHWSRData() {
+
+        const subject =
+            `HWSR DATA OF CWC VSK (43150) DATED ${getTodayDate()}`;
+
+        openCompose(
+            "cwcvsk@gmail.com",
+            subject,
+            "KFA=="
+        );
     }
 
 </script>
 
 </body>
 </html>
+
