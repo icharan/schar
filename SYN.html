@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,6 +74,14 @@
             background: #6a1b9a;
         }
 
+        .upper-air-button {
+            background: #ef6c00;
+        }
+
+        .upper-air-button:hover {
+            background: #e65100;
+        }
+
         .footer {
             position: fixed;
             right: 15px;
@@ -107,22 +114,13 @@
 
     <div class="buttons">
 
-        <!-- SYNOP BUTTONS -->
-
         <button onclick="openGmail('00')">00Z</button>
-
         <button onclick="openGmail('03')">03Z</button>
-
         <button onclick="openGmail('06')">06Z</button>
-
         <button onclick="openGmail('09')">09Z</button>
-
         <button onclick="openGmail('12')">12Z</button>
-
         <button onclick="openGmail('15')">15Z</button>
-
         <button onclick="openGmail('18')">18Z</button>
-
         <button onclick="openGmail('21')">21Z</button>
 
         <button class="ppbb-button" onclick="openPPBB('06')">
@@ -133,8 +131,6 @@
             18Z NO LANTERNS
         </button>
 
-
-
         <button class="synop-pilot-button" onclick="openSynopPilot('06')">
             06Z & PILOT
         </button>
@@ -142,9 +138,6 @@
         <button class="synop-pilot-button" onclick="openSynopPilot('18')">
             18Z & PILOT
         </button>
-
-
- 
 
         <button class="report-button" onclick="openDailyWeatherParameters()">
             DAILY WEATHER PARAMETERS
@@ -154,37 +147,43 @@
             HWSR DATA
         </button>
 
+        <button class="upper-air-button" onclick="openUpperAirMonthly()">
+            UPPER AIR MONTHLY
+        </button>
+
     </div>
 
 </div>
-
 
 <div class="footer">
     <i><b>Charan</b></i>
 </div>
 
-
 <script>
-
-
 
     function getTodayDate() {
 
         const today = new Date();
 
-        const day = String(today.getDate()).padStart(2, '0');
+        const day =
+            String(today.getDate()).padStart(2, '0');
 
-        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const month =
+            String(today.getMonth() + 1).padStart(2, '0');
 
-        const year = today.getFullYear();
+        const year =
+            today.getFullYear();
 
         return `${day}.${month}.${year}`;
     }
 
 
-
-
     function openCompose(recipients, subject, body) {
+
+        body = body
+            .replace(/\r\n/g, "\n")
+            .replace(/\r/g, "\n")
+            .replace(/\n/g, "\r\n");
 
         const gmailURL =
             "https://mail.google.com/mail/?" +
@@ -198,21 +197,24 @@
     }
 
 
-
-
     function openGmail(observationTime) {
 
         const today = new Date();
 
-        const day = String(today.getDate()).padStart(2, '0');
+        const day =
+            String(today.getDate()).padStart(2, '0');
 
-        const date = getTodayDate();
+        const date =
+            getTodayDate();
 
         const body =
-            `AAXX ${day}${observationTime}4\n43150  =`;
+`AAXX ${day}${observationTime}4
+43150  =`;
 
         const recipients =
-            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
+            "amsschennai@gmail.com," +
+            "apdata2021@gmail.com," +
+            "MCAMARAVATI.WS@imd.gov.in";
 
         const subject =
             `${observationTime}Z SYNOP OF CWCVSK (43150) DATED ${date}`;
@@ -225,14 +227,15 @@
     }
 
 
-
     function openPPBB(observationTime) {
 
         const today = new Date();
 
-        const day = String(today.getDate()).padStart(2, '0');
+        const day =
+            String(today.getDate()).padStart(2, '0');
 
-        const date = getTodayDate();
+        const date =
+            getTodayDate();
 
         const reason =
             observationTime === "06"
@@ -240,10 +243,13 @@
                 : "NO ASCENT DUE TO NO LANTERENS";
 
         const body =
-            `PPBB ${day}${observationTime}/\n43150 900// 00000 ${reason}=`;
+`PPBB ${day}${observationTime}/
+43150 900// 00000 ${reason}=`;
 
         const recipients =
-            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
+            "amsschennai@gmail.com," +
+            "apdata2021@gmail.com," +
+            "MCAMARAVATI.WS@imd.gov.in";
 
         const subject =
             `${observationTime}Z PILOT OF CWCVSK (43150) DATED ${date}`;
@@ -256,23 +262,25 @@
     }
 
 
-
     function openSynopPilot(observationTime) {
 
         const today = new Date();
 
-        const day = String(today.getDate()).padStart(2, '0');
+        const day =
+            String(today.getDate()).padStart(2, '0');
 
-        const date = getTodayDate();
+        const date =
+            getTodayDate();
 
         const recipients =
-            "amsschennai@gmail.com,apdata2021@gmail.com,MCAMARAVATI.WS@imd.gov.in";
-
+            "amsschennai@gmail.com," +
+            "apdata2021@gmail.com," +
+            "MCAMARAVATI.WS@imd.gov.in";
 
         if (observationTime === "06") {
 
             const body =
-                `AAXX ${day}${observationTime}4
+`AAXX ${day}064
 43150
 
 PPBB ${day}06/
@@ -288,13 +296,10 @@ PPBB ${day}06/
             );
         }
 
-
-
-
         else if (observationTime === "18") {
 
             const body =
-                `AAXX ${day}${observationTime}4
+`AAXX ${day}184
 43150
 
 PPBB ${day}18/
@@ -312,17 +317,13 @@ PPBB ${day}18/
     }
 
 
-    /* ================================
-       DAILY WEATHER PARAMETERS
-       ================================ */
-
     function openDailyWeatherParameters() {
 
         const subject =
             `DAILY WEATHER PARAMETERS OF CWC VSK DATED ${getTodayDate()}`;
 
         openCompose(
-            "cwcvsk@gmail.com",
+            "mc.amaravati@gmail.com",
             subject,
             "KFA=="
         );
@@ -341,8 +342,60 @@ PPBB ${day}18/
         );
     }
 
+
+    function openUpperAirMonthly() {
+
+        const today = new Date();
+
+        const previousMonth =
+            new Date(
+                today.getFullYear(),
+                today.getMonth() - 1,
+                1
+            );
+
+        const monthName =
+            previousMonth.toLocaleString(
+                'en-US',
+                {
+                    month: 'long'
+                }
+            );
+
+        const year =
+            previousMonth.getFullYear();
+
+        const subject =
+            `MONTHLY UPPER AIR DATA OF CWCVSK(43150) FOR THE MONTH OF ${monthName.toUpperCase()}- ${year}`;
+
+        const body =
+`Sir/Madam,
+Kindly find the following attachments :
+
+1. Balloon ascent data 06Z
+2. Balloon ascent data 18 Z
+3. PBO Ascent duration (06z & 18z)
+4. A Table for Frequency of low cloud height.
+
+Upper Air Monthly report (06z & 18z) could not be generated in the HHDL Processing window as the year ${year} slot is not available to generate the same. This Office requests to update the years beyond 2025 to generate the data in future.`;
+
+        const recipients =
+            "cs.rmc.chennai@gmail.com," +
+            "dataual@yahoo.co.in," +
+            "ddgmsi@imd.gov.in," +
+            "apdata2021@gmail.com," +
+            "mcamaravati.ws@imd.gov.in," +
+            "dataual@gmail.com," +
+            "pbochennai@gmail.com";
+
+        openCompose(
+            recipients,
+            subject,
+            body
+        );
+    }
+
 </script>
 
 </body>
 </html>
-
