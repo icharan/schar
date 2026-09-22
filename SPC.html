@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CWC VSK SPL Observation</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f5f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: white;
+        padding: 25px;
+        width: 450px;
+        max-width: 90%;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+        text-align: center;
+        color: #1a4d80;
+        margin-top: 0;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 6px;
+    }
+
+    input, textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #aaa;
+        border-radius: 6px;
+        font-family: Arial, sans-serif;
+    }
+
+    textarea {
+        resize: vertical;
+        height: 110px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .gmail {
+        background: green;
+    }
+
+    .whatsapp {
+        background: green;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>CWC VSK SPL Observation</h2>
+
+    <label for="obsTime">Observation Time</label>
+    <input
+        type="text"
+        id="obsTime"
+        placeholder="Enter time, e.g. 11Z"
+        value=" Z"
+    >
+
+    <label for="gmailText">Gmail Message Body Text</label>
+    <textarea
+        id="gmailText"
+        placeholder=""
+    ></textarea>
+
+    <label for="obsDetails">(WhatsApp)</label>
+    <textarea
+        id="obsDetails"
+    >CWC VSK(43150)
+
+
+
+TOTAL RAINFALL UPTO Z: </textarea>
+
+    <button class="gmail" onclick="openGmail()">
+        Open Gmail
+    </button>
+
+    <button class="whatsapp" onclick="openWhatsApp()">
+        Open WhatsApp
+    </button>
+
+</div>
+
+<script>
+
+const recipients = [
+    "amsschennai@gmail.com",
+    "apdata2021@gmail.com",
+    "MCAMARAVATI.WS@imd.gov.in"
+];
+
+function getCurrentDate() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
+
+function getSubject() {
+    let time = document.getElementById("obsTime").value.trim();
+
+    if (time === "") {
+        time = "11Z";
+    }
+
+    return `${time} SPL OBS OF CWC VSK (43150) DATED ${getCurrentDate()}`;
+}
+
+function openGmail() {
+    const subject = getSubject();
+    const gmailBody = document.getElementById("gmailText").value;
+
+    const gmailURL =
+        "https://mail.google.com/mail/?view=cm" +
+        "&to=" + encodeURIComponent(recipients.join(",")) +
+        "&su=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(gmailBody);
+
+    window.open(gmailURL, '_blank');
+}
+
+function openWhatsApp() {
+    const subject = getSubject();
+    const detailsText = document.getElementById("obsDetails").value;
+
+    const message =
+        subject +
+        "\n\n\n" +
+        detailsText +
+        "\n\nTO:\n" +
+        recipients.join("\n");
+
+    const whatsappURL =
+        "https://wa.me/?text=" +
+        encodeURIComponent(message);
+
+    window.location.href = whatsappURL;
+}
+
+</script>
+
+</body>
+</html>
