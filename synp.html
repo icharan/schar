@@ -1,229 +1,329 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNOP Report Entry with Calculator & Converter</title>
 <style>
-* {
-  box-sizing: border-box;
-}
+  * { box-sizing: border-box; }
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 12px;
-  background: #f4f6f8;
-  color: #222;
-}
-
-.container {
-  max-width: 1400px;
-  margin: auto;
-  background: white;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-h2 {
-  font-size: 20px;
-  margin: 0 0 14px;
-}
-
-.utc-area {
-  margin-bottom: 14px;
-}
-
-.utc-area label {
-  display: block;
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-#utc {
-  width: 105px;
-  padding: 7px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-  background: white;
-}
-
-/* Three rows, nine columns */
-.synop-row {
-  display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 7px;
-  margin-bottom: 12px;
-}
-
-.field {
-  min-width: 0;
-}
-
-.field label {
-  display: block;
-  font-size: 11px;
-  color: #444;
-  margin-bottom: 4px;
-  overflow-wrap: anywhere;
-}
-
-.field input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-  padding: 4px;
-  font-size: 12px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-}
-
-.field input:disabled {
-  background: #e9edf1;
-  color: #333;
-  opacity: 1;
-}
-
-.preview-title {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 14px 0 6px;
-}
-
-#subject,
-#report {
-  padding: 10px;
-  background: #f0f2f4;
-  border-radius: 5px;
-  overflow-wrap: anywhere;
-  font-size: 13px;
-}
-
-#report {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Weather image */
-.image-section {
-  margin-top: 14px;
-}
-
-#weatherImage {
-  display: block;
-  max-width: 100%;
-  max-height: 400px;
-  height: auto;
-  margin-top: 8px;
-  border-radius: 5px;
-}
-
-/* Subtraction calculator */
-.calculator {
-  margin-top: 14px;
-}
-
-.calculator-inputs {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.calculator-inputs input {
-  width: 120px;
-  max-width: 100%;
-  padding: 9px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-}
-
-#subtractBtn {
-  flex: 0 0 auto;
-  background: #1769aa;
-  color: white;
-  padding: 9px 16px;
-}
-
-#subtractResult {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-/* Main buttons */
-.buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-button {
-  flex: 1;
-  padding: 11px;
-  border: 0;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-#copyBtn {
-  background: #1769aa;
-  color: white;
-}
-
-#gmailBtn {
-  background: #18864b;
-  color: white;
-}
-
-button:hover {
-  filter: brightness(.94);
-}
-
-.note {
-  font-size: 11px;
-  color: #666;
-  margin-top: 10px;
-}
-
-@media (max-width: 700px) {
   body {
-    margin: 5px;
+    font-family: Arial, sans-serif;
+    margin: 12px;
+    background: #f4f6f8;
+    color: #222;
+    zoom: 1.25; /* Scales the entire page up to 125% by default */
   }
 
   .container {
-    padding: 8px;
+    max-width: 1400px;
+    margin: auto;
+    background: white;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
   }
 
+  h2 {
+    font-size: 20px;
+    margin: 0 0 14px;
+  }
+
+  .utc-area {
+    margin-bottom: 14px;
+  }
+
+  .utc-area label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  #utc {
+    width: 105px;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    background: white;
+  }
+
+  /* Exactly 3 rows, with 9 boxes in each row */
   .synop-row {
-    gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .field {
+    min-width: 0;
   }
 
   .field label {
-    font-size: 9px;
+    display: block;
+    font-size: 11px;
+    color: #444;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
   }
 
   .field input {
-    height: 30px;
-    padding: 2px;
-    font-size: 10px;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 4px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
   }
 
-  .calculator-inputs input {
-    width: 100px;
+  .field input:disabled {
+    background: #e9edf1;
+    color: #333;
+    opacity: 1;
   }
-}
+
+  .preview-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 14px 0 6px;
+  }
+
+  #subject, #report {
+    padding: 10px;
+    background: #f0f2f4;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+  }
+
+  #report {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Tools Wrapper (Calculator + UTC to IST Converter + Image Box) */
+  .tools-wrapper {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .tool-box {
+    padding: 12px;
+    background: #eaeef2;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    flex: 1;
+    min-width: 260px;
+    max-width: 350px;
+  }
+
+  .tool-box h3 {
+    font-size: 13px;
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+
+  /* Two-Input Calculator Styles */
+  .calc-content {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .calc-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .calc-row input {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: white;
+    width: 100%;
+  }
+
+  .calc-buttons {
+    display: flex;
+    gap: 6px;
+  }
+
+  .calc-buttons button {
+    flex: 1;
+    padding: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+  }
+
+  .calc-btn-add {
+    background: #1769aa;
+  }
+
+  .calc-btn-sub {
+    background: #c0392b;
+  }
+
+  .calc-buttons button:hover {
+    filter: brightness(0.9);
+  }
+
+  #calc-result {
+    font-weight: bold;
+    color: #222;
+    background: white;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    text-align: right;
+  }
+
+  /* UTC to IST Converter Styles */
+  .converter-content {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .converter-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .converter-row input {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: white;
+    text-align: center;
+  }
+
+  #conv-utc-hh {
+    width: 50px;
+  }
+
+  #conv-utc-mm {
+    width: 50px;
+  }
+
+  #ist-result {
+    font-weight: bold;
+    color: #1769aa;
+    background: white;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Image Box & Zoom Styles */
+  .image-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    padding: 4px;
+    min-height: 110px;
+  }
+
+  .image-content img {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 2px;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+  }
+
+  .image-content img:hover {
+    transform: scale(1.03);
+  }
+
+  /* Modal Overlay for Zoomed Image */
+  #imageModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out;
+  }
+
+  #imageModal img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  button.action-btn {
+    flex: 1;
+    padding: 11px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  #copyBtn {
+    background: #1769aa;
+    color: white;
+  }
+
+  #gmailBtn {
+    background: #18864b;
+    color: white;
+  }
+
+  button.action-btn:hover {
+    filter: brightness(.94);
+  }
+
+  @media (max-width: 700px) {
+    body { margin: 5px; }
+    .container { padding: 8px; }
+    .synop-row { gap: 4px; }
+    .field label { font-size: 9px; }
+    .field input {
+      height: 30px;
+      padding: 2px;
+      font-size: 10px;
+    }
+  }
 </style>
 </head>
 
 <body>
 <div class="container">
-
-  <h2>SYNOP Report Entry</h2>
-
   <div class="utc-area">
     <label for="utc">Observation UTC</label>
     <select id="utc">
@@ -247,41 +347,62 @@ button:hover {
   <div id="report"></div>
 
   <div class="buttons">
-    <button id="copyBtn" type="button">Copy Report</button>
-    <button id="gmailBtn" type="button">Open Gmail</button>
+    <button id="copyBtn" class="action-btn" type="button">Copy Report</button>
+    <button id="gmailBtn" class="action-btn" type="button">Open Gmail</button>
   </div>
 
-  <!-- Subtraction Calculator -->
-  <!-- Subtraction Calculator -->
-<div class="calculator">
-  <div class="preview-title">Subtraction Calculator</div>
+  <!-- Side-by-side Tools Widget -->
+  <div class="tools-wrapper">
+    <!-- Two-Input Calculator (Add & Subtract) -->
+    <div class="tool-box">
+      <h3>Quick Calculator (+ / -)</h3>
+      <div class="calc-content">
+        <div class="calc-row">
+          <input type="number" id="calc-num1" placeholder="Value 1" value="0">
+        </div>
+        <div class="calc-row">
+          <input type="number" id="calc-num2" placeholder="Value 2" value="0">
+        </div>
+        <div class="calc-buttons">
+          <button type="button" class="calc-btn-add" onclick="calculate('+')">Add (+)</button>
+          <button type="button" class="calc-btn-sub" onclick="calculate('-')">Subtract (-)</button>
+        </div>
+        <div id="calc-result">Result: 0</div>
+      </div>
+    </div>
 
-  <div class="calculator-inputs">
-    <input
-      type="number"
-      id="num1"
-      placeholder="First number"
-      step="any"
-    >
+    <!-- UTC to IST Converter -->
+    <div class="tool-box">
+      <h3>UTC to IST Converter</h3>
+      <div class="converter-content">
+        <div class="converter-row">
+          <label style="font-size: 12px; min-width: 35px;">UTC:</label>
+          <input type="number" id="conv-utc-hh" value="03" min="0" max="23" placeholder="HH" oninput="convertTime()">
+          <span>:</span>
+          <input type="number" id="conv-utc-mm" value="00" min="0" max="59" placeholder="MM" oninput="convertTime()">
+        </div>
+        <div class="converter-row">
+          <label style="font-size: 12px; min-width: 35px;">IST:</label>
+          <div id="ist-result">08:30 IST</div>
+        </div>
+        <div style="font-size: 11px; color: #666; margin-top: 4px;">
+        </div>
+      </div>
+    </div>
 
-    <span>−</span>
-
-    <input
-      type="number"
-      id="num2"
-      placeholder="Second number"
-      step="any"
-    >
-
-    <button type="button" id="subtractBtn">Calculate</button>
-  </div>
-
-  <div id="subtractResult" aria-live="polite">
-    Result: —
+    <!-- Image Box Widget -->
+    <div class="tool-box">
+      <h3>Reference Image</h3>
+      <div class="image-content">
+        <img id="tool-image" src="SYNOP" alt="Reference Image" onclick="openModal()">
+      </div>
+    </div>
   </div>
 </div>
 
-
+<!-- Fullscreen Zoom Modal -->
+<div id="imageModal" onclick="closeModal()">
+  <img id="modalImage" src="SYNOP" alt="Zoomed Reference Image">
 </div>
 
 <script>
@@ -309,8 +430,7 @@ const groups12 = [
 
 const otherGroups = [
   "8NhCLCMCH", "333", "57Cdaec", "58/59prchng",
-  "6r/f", "8NsChshs1", "8NsChshs2",
-  "8NsChshs3", "8NsChshs4"
+  "6r/f", "8NsChshs1", "8NsChshs2", "8NsChshs3", "8NsChshs4"
 ];
 
 const fixedPrefixes = {
@@ -330,7 +450,6 @@ function getGroups(utc) {
 
 function getDateParts() {
   const now = new Date();
-
   return {
     day: String(now.getUTCDate()).padStart(2, "0"),
     month: String(now.getUTCMonth() + 1).padStart(2, "0"),
@@ -367,14 +486,10 @@ function getGroupValue(group, utc) {
       (savedValues[utc + "_" + group] || "");
   }
 
-  if (group === "333" || group === "555") {
-    return group;
-  }
+  if (group === "333" || group === "555") return group;
 
-  if (
-    (utc === "03" || utc === "12") &&
-    (group === "222//" || group === "20000")
-  ) {
+  if ((utc === "03" || utc === "12") &&
+      (group === "222//" || group === "20000")) {
     return group;
   }
 
@@ -408,25 +523,24 @@ function createField(group, utc) {
 
   if (fixedPrefixes[group]) {
     input.placeholder = fixedPrefixes[group];
-
     input.addEventListener("input", () => {
       let value = input.value;
-      const prefix = fixedPrefixes[group];
 
-      if (value.startsWith(prefix)) {
-        value = value.slice(prefix.length);
+      if (value.startsWith(fixedPrefixes[group])) {
+        value = value.slice(fixedPrefixes[group].length);
       }
 
       savedValues[utc + "_" + group] = value;
-      input.value = prefix + value;
+      input.value = fixedPrefixes[group] + value;
       updatePreview();
     });
 
     input.addEventListener("focus", () => {
       const prefix = fixedPrefixes[group];
-
       requestAnimationFrame(() => {
-        input.setSelectionRange(prefix.length, input.value.length);
+        input.setSelectionRange(
+          prefix.length, input.value.length
+        );
       });
     });
   } else {
@@ -446,17 +560,14 @@ function renderForm() {
 
   rowsContainer.replaceChildren();
 
-  // Preserve the existing three-row, nine-column layout.
   for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
     const row = document.createElement("div");
     row.className = "synop-row";
 
     for (let col = 0; col < 9; col++) {
       const group = groups[rowIndex * 9 + col];
-
-      if (group) {
-        row.appendChild(createField(group, utc));
-      }
+      if (!group) continue;
+      row.appendChild(createField(group, utc));
     }
 
     rowsContainer.appendChild(row);
@@ -465,25 +576,33 @@ function renderForm() {
   updatePreview();
 }
 
-/* Split the report immediately before station identifier 43150. */
 function getReport() {
   const utc = utcSelect.value;
   const groups = getGroups(utc);
-  const stationIndex = groups.indexOf("IIiii");
 
-  const firstLine = groups
-    .slice(0, stationIndex)
-    .map(group => String(getGroupValue(group, utc)).trim())
-    .filter(Boolean)
-    .join(" ");
+  const firstLineGroups = [];
+  const secondLineGroups = [];
+  let foundIIiii = false;
 
-  const secondLine = groups
-    .slice(stationIndex)
-    .map(group => String(getGroupValue(group, utc)).trim())
-    .filter(Boolean)
-    .join(" ");
+  for (const group of groups) {
+    const val = String(getGroupValue(group, utc)).trim();
+    if (!val) continue;
 
-  return firstLine + "\n" + secondLine + "=";
+    if (group === "IIiii") {
+      foundIIiii = true;
+    }
+
+    if (!foundIIiii) {
+      firstLineGroups.push(val);
+    } else {
+      secondLineGroups.push(val);
+    }
+  }
+
+  let line1 = firstLineGroups.join(" ");
+  let line2 = secondLineGroups.join(" ") + "=";
+
+  return line1 + "\n" + line2;
 }
 
 function getSubject() {
@@ -511,7 +630,63 @@ function updatePreview() {
   document.getElementById("report").textContent = getReport();
 }
 
-utcSelect.addEventListener("change", renderForm);
+/* Two-Input Calculation Function */
+function calculate(op) {
+  let num1 = parseFloat(document.getElementById("calc-num1").value);
+  let num2 = parseFloat(document.getElementById("calc-num2").value);
+
+  if (isNaN(num1)) num1 = 0;
+  if (isNaN(num2)) num2 = 0;
+
+  let result = 0;
+  if (op === "+") {
+    result = num1 + num2;
+  } else if (op === "-") {
+    result = num1 - num2;
+  }
+
+  result = Math.round(result * 1000000) / 1000000;
+  document.getElementById("calc-result").textContent = `Result: ${result}`;
+}
+
+/* UTC to IST Converter Function */
+function convertTime() {
+  let hhInput = parseInt(document.getElementById("conv-utc-hh").value, 10);
+  let mmInput = parseInt(document.getElementById("conv-utc-mm").value, 10);
+
+  if (isNaN(hhInput)) hhInput = 0;
+  if (isNaN(mmInput)) mmInput = 0;
+
+  let totalMinutes = (hhInput * 60) + mmInput + 330;
+  let dayShiftCount = Math.floor(totalMinutes / 1440);
+  totalMinutes %= 1440;
+  if (totalMinutes < 0) totalMinutes += 1440;
+
+  let istHours = Math.floor(totalMinutes / 60);
+  let istMinutes = totalMinutes % 60;
+
+  let formattedHours = String(istHours).padStart(2, "0");
+  let formattedMinutes = String(istMinutes).padStart(2, "0");
+
+  let dayShiftText = dayShiftCount > 0 ? ` (+${dayShiftCount} Day)` : "";
+  document.getElementById("ist-result").textContent = `${formattedHours}:${formattedMinutes} IST${dayShiftText}`;
+}
+
+/* Image Zoom Modal Functions */
+function openModal() {
+  document.getElementById("imageModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+utcSelect.addEventListener("change", () => {
+  renderForm();
+  document.getElementById("conv-utc-hh").value = utcSelect.value;
+  document.getElementById("conv-utc-mm").value = "00";
+  convertTime();
+});
 
 document.getElementById("copyBtn").addEventListener("click", async () => {
   const text = getReport();
@@ -524,19 +699,15 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
     textarea.value = text;
     document.body.appendChild(textarea);
     textarea.select();
-
     const copied = document.execCommand("copy");
     textarea.remove();
 
-    alert(
-      copied
-        ? "SYNOP report copied."
-        : "Copy failed. Please select and copy the report manually."
-    );
+    alert(copied
+      ? "SYNOP report copied."
+      : "Copy failed. Please select and copy the report manually.");
   }
 });
 
-/* Open Gmail with report and subject. */
 document.getElementById("gmailBtn").addEventListener("click", () => {
   const recipients = [
     "amsschennai@gmail.com",
@@ -552,31 +723,8 @@ document.getElementById("gmailBtn").addEventListener("click", () => {
   window.open(url, "_blank", "noopener");
 });
 
-/* Subtraction calculator. */
-document.getElementById("subtractBtn").addEventListener("click", () => {
-  const a = document.getElementById("num1").value;
-  const b = document.getElementById("num2").value;
-  const result = document.getElementById("subtractResult");
-
-  if (a.trim() === "" || b.trim() === "") {
-    result.textContent = "Please enter both numbers.";
-    return;
-  }
-
-  const answer = Number(a) - Number(b);
-  result.textContent = "Result: " + answer;
-});
-
-/* Also calculate when Enter is pressed in either input. */
-["num1", "num2"].forEach(id => {
-  document.getElementById(id).addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      document.getElementById("subtractBtn").click();
-    }
-  });
-});
-
 renderForm();
+convertTime();
 </script>
 </body>
 </html>
