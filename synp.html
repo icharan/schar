@@ -4,8 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SYNOP Report Entry</title>
-
 <style>
 * {
   box-sizing: border-box;
@@ -257,13 +255,6 @@ button:hover {
   <!-- GitHub Weather Image -->
   <div class="image-section">
     <div class="preview-title">Weather Image</div>
-
-    <img
-      id="weatherImage"
-      src="SYNOP"
-      alt="Weather observation image"
-      onerror="this.alt='Image could not be loaded. Check the GitHub raw URL.'"
-    >
   </div>
 
   <!-- Subtraction Calculator -->
@@ -289,7 +280,6 @@ button:hover {
     >
 
     <button type="button" id="subtractBtn">Calculate</button>
-    <button type="button" id="clearCalcBtn">Clear</button>
   </div>
 
   <div id="subtractResult" aria-live="polite">
