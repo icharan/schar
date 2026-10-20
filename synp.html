@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNOP Report Entry</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 12px;
+  background: #f4f6f8;
+  color: #222;
+}
+
+.container {
+  max-width: 1400px;
+  margin: auto;
+  background: white;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+
+.utc-area {
+  margin-bottom: 14px;
+}
+
+.utc-area label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#utc {
+  width: 105px;
+  padding: 7px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  background: white;
+}
+
+/* Three rows, nine columns */
+.synop-row {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  color: #444;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+
+.field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+.field input:disabled {
+  background: #e9edf1;
+  color: #333;
+  opacity: 1;
+}
+
+.preview-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 14px 0 6px;
+}
+
+#subject,
+#report {
+  padding: 10px;
+  background: #f0f2f4;
+  border-radius: 5px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+#report {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Weather image */
+.image-section {
+  margin-top: 14px;
+}
+
+#weatherImage {
+  display: block;
+  max-width: 100%;
+  max-height: 400px;
+  height: auto;
+  margin-top: 8px;
+  border-radius: 5px;
+}
+
+/* Subtraction calculator */
+.calculator {
+  margin-top: 14px;
+}
+
+.calculator-inputs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.calculator-inputs input {
+  width: 120px;
+  max-width: 100%;
+  padding: 9px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+
+#subtractBtn {
+  flex: 0 0 auto;
+  background: #1769aa;
+  color: white;
+  padding: 9px 16px;
+}
+
+#subtractResult {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Main buttons */
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button {
+  flex: 1;
+  padding: 11px;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#copyBtn {
+  background: #1769aa;
+  color: white;
+}
+
+#gmailBtn {
+  background: #18864b;
+  color: white;
+}
+
+button:hover {
+  filter: brightness(.94);
+}
+
+.note {
+  font-size: 11px;
+  color: #666;
+  margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  body {
+    margin: 5px;
+  }
+
+  .container {
+    padding: 8px;
+  }
+
+  .synop-row {
+    gap: 4px;
+  }
+
+  .field label {
+    font-size: 9px;
+  }
+
+  .field input {
+    height: 30px;
+    padding: 2px;
+    font-size: 10px;
+  }
+
+  .calculator-inputs input {
+    width: 100px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <h2>SYNOP Report Entry</h2>
+
+  <div class="utc-area">
+    <label for="utc">Observation UTC</label>
+    <select id="utc">
+      <option value="00">00 UTC</option>
+      <option value="03" selected>03 UTC</option>
+      <option value="06">06 UTC</option>
+      <option value="09">09 UTC</option>
+      <option value="12">12 UTC</option>
+      <option value="15">15 UTC</option>
+      <option value="18">18 UTC</option>
+      <option value="21">21 UTC</option>
+    </select>
+  </div>
+
+  <div id="rows"></div>
+
+  <div class="preview-title">Email subject</div>
+  <div id="subject"></div>
+
+  <div class="preview-title">Generated SYNOP report</div>
+  <div id="report"></div>
+
+  <div class="buttons">
+    <button id="copyBtn" type="button">Copy Report</button>
+    <button id="gmailBtn" type="button">Open Gmail</button>
+  </div>
+
+
+  <!-- GitHub Weather Image -->
+  <div class="image-section">
+    <div class="preview-title">Weather Image</div>
+
+    <img
+      id="weatherImage"
+      src="SYNOP"
+      alt="Weather observation image"
+      onerror="this.alt='Image could not be loaded. Check the GitHub raw URL.'"
+    >
+  </div>
+
+  <!-- Subtraction Calculator -->
+  <!-- Subtraction Calculator -->
+<div class="calculator">
+  <div class="preview-title">Subtraction Calculator</div>
+
+  <div class="calculator-inputs">
+    <input
+      type="number"
+      id="num1"
+      placeholder="First number"
+      step="any"
+    >
+
+    <span>−</span>
+
+    <input
+      type="number"
+      id="num2"
+      placeholder="Second number"
+      step="any"
+    >
+
+    <button type="button" id="subtractBtn">Calculate</button>
+    <button type="button" id="clearCalcBtn">Clear</button>
+  </div>
+
+  <div id="subtractResult" aria-live="polite">
+    Result: —
+  </div>
+</div>
+
+
+</div>
+
+<script>
+const utcSelect = document.getElementById("utc");
+const rowsContainer = document.getElementById("rows");
+
+const commonGroups = [
+  "AAXX", "YYGGiw", "IIiii", "iRiXhVV", "Nddff",
+  "1snTTT", "2snTdTdTd", "3PoPoPoPo", "4PPPP", "7wwW1W2"
+];
+
+const groups03 = [
+  "8NhCLCMCH", "222//", "20000", "333", "1omax",
+  "2omin", "579daec", "58/59prchng", "6r/f",
+  "8NsChshs1", "8NsChshs2", "8NsChshs3",
+  "8NsChshs4", "555", "R24", "10seasonal"
+];
+
+const groups12 = [
+  "8NhCLCMCH", "222//", "20000", "333", "57Cdaec",
+  "1omax", "58/59prchng", "6r/f",
+  "8NsChshs1", "8NsChshs2", "8NsChshs3",
+  "8NsChshs4"
+];
+
+const otherGroups = [
+  "8NhCLCMCH", "333", "57Cdaec", "58/59prchng",
+  "6r/f", "8NsChshs1", "8NsChshs2",
+  "8NsChshs3", "8NsChshs4"
+];
+
+const fixedPrefixes = {
+  "1snTTT": "10",
+  "2snTdTdTd": "20",
+  "3PoPoPoPo": "3",
+  "4PPPP": "4"
+};
+
+const savedValues = {};
+
+function getGroups(utc) {
+  if (utc === "03") return [...commonGroups, ...groups03];
+  if (utc === "12") return [...commonGroups, ...groups12];
+  return [...commonGroups, ...otherGroups];
+}
+
+function getDateParts() {
+  const now = new Date();
+
+  return {
+    day: String(now.getUTCDate()).padStart(2, "0"),
+    month: String(now.getUTCMonth() + 1).padStart(2, "0"),
+    year: now.getUTCFullYear()
+  };
+}
+
+function getDateText() {
+  const d = getDateParts();
+  return `${d.day}.${d.month}.${d.year}`;
+}
+
+function getGroupValue(group, utc) {
+  if (group === "AAXX") return "AAXX";
+
+  const d = getDateParts();
+
+  if (group === "YYGGiw") {
+    let day = Number(d.day);
+
+    if (utc === "21") {
+      const previous = new Date();
+      previous.setUTCDate(previous.getUTCDate() - 1);
+      day = previous.getUTCDate();
+    }
+
+    return String(day).padStart(2, "0") + utc + "4";
+  }
+
+  if (group === "IIiii") return "43150";
+
+  if (fixedPrefixes[group]) {
+    return fixedPrefixes[group] +
+      (savedValues[utc + "_" + group] || "");
+  }
+
+  if (group === "333" || group === "555") {
+    return group;
+  }
+
+  if (
+    (utc === "03" || utc === "12") &&
+    (group === "222//" || group === "20000")
+  ) {
+    return group;
+  }
+
+  return savedValues[utc + "_" + group] || "";
+}
+
+function createField(group, utc) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "field";
+
+  const label = document.createElement("label");
+  label.textContent = group;
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.autocomplete = "off";
+  input.value = getGroupValue(group, utc);
+  input.setAttribute("aria-label", group);
+
+  const isAutomatic = [
+    "AAXX", "YYGGiw", "IIiii", "333", "555"
+  ].includes(group);
+
+  const isFixedSpecialGroup =
+    (utc === "03" || utc === "12") &&
+    (group === "222//" || group === "20000");
+
+  if (isAutomatic || isFixedSpecialGroup) {
+    input.disabled = true;
+  }
+
+  if (fixedPrefixes[group]) {
+    input.placeholder = fixedPrefixes[group];
+
+    input.addEventListener("input", () => {
+      let value = input.value;
+      const prefix = fixedPrefixes[group];
+
+      if (value.startsWith(prefix)) {
+        value = value.slice(prefix.length);
+      }
+
+      savedValues[utc + "_" + group] = value;
+      input.value = prefix + value;
+      updatePreview();
+    });
+
+    input.addEventListener("focus", () => {
+      const prefix = fixedPrefixes[group];
+
+      requestAnimationFrame(() => {
+        input.setSelectionRange(prefix.length, input.value.length);
+      });
+    });
+  } else {
+    input.addEventListener("input", () => {
+      savedValues[utc + "_" + group] = input.value;
+      updatePreview();
+    });
+  }
+
+  wrapper.append(label, input);
+  return wrapper;
+}
+
+function renderForm() {
+  const utc = utcSelect.value;
+  const groups = getGroups(utc);
+
+  rowsContainer.replaceChildren();
+
+  // Preserve the existing three-row, nine-column layout.
+  for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+    const row = document.createElement("div");
+    row.className = "synop-row";
+
+    for (let col = 0; col < 9; col++) {
+      const group = groups[rowIndex * 9 + col];
+
+      if (group) {
+        row.appendChild(createField(group, utc));
+      }
+    }
+
+    rowsContainer.appendChild(row);
+  }
+
+  updatePreview();
+}
+
+/* Split the report immediately before station identifier 43150. */
+function getReport() {
+  const utc = utcSelect.value;
+  const groups = getGroups(utc);
+  const stationIndex = groups.indexOf("IIiii");
+
+  const firstLine = groups
+    .slice(0, stationIndex)
+    .map(group => String(getGroupValue(group, utc)).trim())
+    .filter(Boolean)
+    .join(" ");
+
+  const secondLine = groups
+    .slice(stationIndex)
+    .map(group => String(getGroupValue(group, utc)).trim())
+    .filter(Boolean)
+    .join(" ");
+
+  return firstLine + "\n" + secondLine + "=";
+}
+
+function getSubject() {
+  let date;
+
+  if (utcSelect.value === "21") {
+    const previousDay = new Date();
+    previousDay.setUTCDate(previousDay.getUTCDate() - 1);
+
+    const dd = String(previousDay.getUTCDate()).padStart(2, "0");
+    const mm = String(previousDay.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = previousDay.getUTCFullYear();
+
+    date = `${dd}.${mm}.${yyyy}`;
+  } else {
+    date = getDateText();
+  }
+
+  return `${utcSelect.value}00 UTC SYNOP OF CWC VSK ` +
+    `(43150) DATED ${date}`;
+}
+
+function updatePreview() {
+  document.getElementById("subject").textContent = getSubject();
+  document.getElementById("report").textContent = getReport();
+}
+
+utcSelect.addEventListener("change", renderForm);
+
+/* Copy report, including the line break. */
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  const text = getReport();
+
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("SYNOP report copied.");
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    const copied = document.execCommand("copy");
+    textarea.remove();
+
+    alert(
+      copied
+        ? "SYNOP report copied."
+        : "Copy failed. Please select and copy the report manually."
+    );
+  }
+});
+
+/* Open Gmail with report and subject. */
+document.getElementById("gmailBtn").addEventListener("click", () => {
+  const recipients = [
+    "amsschennai@gmail.com",
+    "apdata2021@gmail.com",
+    "MCAMARAVATI.WS@imd.gov.in"
+  ].join(",");
+
+  const url = "https://mail.google.com/mail/?view=cm&fs=1" +
+    "&to=" + encodeURIComponent(recipients) +
+    "&su=" + encodeURIComponent(getSubject()) +
+    "&body=" + encodeURIComponent(getReport());
+
+  window.open(url, "_blank", "noopener");
+});
+
+/* Subtraction calculator. */
+document.getElementById("subtractBtn").addEventListener("click", () => {
+  const a = document.getElementById("num1").value;
+  const b = document.getElementById("num2").value;
+  const result = document.getElementById("subtractResult");
+
+  if (a.trim() === "" || b.trim() === "") {
+    result.textContent = "Please enter both numbers.";
+    return;
+  }
+
+  const answer = Number(a) - Number(b);
+  result.textContent = "Result: " + answer;
+});
+
+/* Also calculate when Enter is pressed in either input. */
+["num1", "num2"].forEach(id => {
+  document.getElementById(id).addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      document.getElementById("subtractBtn").click();
+    }
+  });
+});
+
+renderForm();
+</script>
+</body>
+</html>
