@@ -1,3 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPL OBS Message Generator - CWCVSK</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px; font-family: Arial, sans-serif;
+    background: #f3f5f8; color: #18212f;
+  }
+  .container {
+    max-width: 950px; margin: auto; background: #fff; padding: 24px;
+    border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.08);
+  }
+  h1 { margin: 0 0 8px; font-size: 25px; }
+  .sub { color: #586477; margin: 0 0 22px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .groups-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    grid-column: 1 / -1;
+  }
+  label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  input, select, textarea {
+    width: 100%; padding: 11px 12px; border: 1px solid #cbd2dc;
+    border-radius: 7px; font: inherit; background: #fff;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid #9bbcff; border-color: #356fe0; }
+  .full { grid-column: 1 / -1; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+  button {
+    border: 0; border-radius: 8px; padding: 12px 16px; color: #fff;
+    font-weight: 700; cursor: pointer; background: #202833;
+  }
+  button:hover { opacity: .9; }
+  .whatsapp { background: #168a45; }
+  .gmail { background: #c53929; }
+  .copy { background: #525f70; }
+  .output { background: #f7f9fc; border: 1px solid #d9e0e9; padding: 14px; border-radius: 9px; }
+  .output h2 { font-size: 17px; margin: 0 0 10px; }
+  textarea { min-height: 105px; resize: vertical; }
+  .status { min-height: 20px; font-size: 13px; color: #185adb; margin-top: 8px; }
+
+  /* Calculator Tool Styles */
+  .tools-wrapper {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .tool-box {
+    padding: 12px;
+    background: #eaeef2;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    flex: 1;
+    min-width: 260px;
+    max-width: 350px;
+  }
+
+  .tool-box h3 {
+    font-size: 13px;
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+
+  .calc-content {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .calc-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .calc-row input {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: white;
+    width: 100%;
+  }
+
+  .calc-buttons {
+    display: flex;
+    gap: 6px;
+  }
+
+  .calc-buttons button {
+    flex: 1;
+    padding: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+  }
+
+  .calc-btn-add {
+    background: #1769aa;
+  }
+
+  .calc-btn-sub {
+    background: #c0392b;
+  }
+
+  .calc-buttons button:hover {
+    filter: brightness(0.9);
+  }
+
+  #calc-result {
+    font-weight: bold;
+    color: #222;
+    background: white;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    text-align: right;
+  }
+
+  @media (max-width: 800px) {
+    .groups-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    body { padding: 10px; } .container { padding: 16px; }
+    .grid, .groups-row { grid-template-columns: 1fr; } .full { grid-column: auto; }
+    h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="grid">
+    <div>
+      <label for="obsDate">Observation date</label>
+      <input type="date" id="obsDate" required>
+    </div>
+    <div>
+      <label for="obsTime">Observation time (UTC/Z)</label>
+      <select id="obsTime">
+        <option value="01">01Z</option>
+        <option value="02">02Z</option>
+        <option value="04">04Z</option>
+        <option value="05">05Z</option>
+        <option value="07">07Z</option>
+        <option value="08">08Z</option>
+        <option value="10">10Z</option>
+        <option value="11">11Z</option>
+        <option value="13">13Z</option>
+        <option value="14">14Z</option>
+        <option value="16">16Z</option>
+        <option value="17">17Z</option>
+        <option value="19">19Z</option>
+        <option value="20">20Z</option>
+        <option value="22">22Z</option>
+        <option value="23">23Z</option>
+      </select>
+    </div>
+
+    <!-- All SYNOP groups in a single row with blank placeholders and strict 5-character limit -->
+    <div class="groups-row">
+      <div>
+        <label for="Nddff">Nddff</label>
+        <input id="Nddff" value="" placeholder="" maxlength="5" required>
+      </div>
+      <div>
+        <label for="PPPW1">PPPW1</label>
+        <input id="PPPW1" value="" placeholder="" maxlength="5" required>
+      </div>
+      <div>
+        <label for="wwRRR">wwRRR</label>
+        <input id="wwRRR" value="" placeholder="" maxlength="5" required>
+      </div>
+      <div>
+        <label for="pressure">59P24P24P24</label>
+        <input id="pressure" value="" placeholder="" maxlength="5" required>
+      </div>
+    </div>
+
+    <div class="full">
+      <input id="extra">
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="copy" type="button" id="copyBtn">Copy Message</button>
+    <button class="whatsapp" type="button" id="waBtn">Open WhatsApp</button>
+    <button class="gmail" type="button" id="gmailBtn">Open Gmail</button>
+  </div>
+
+  <div class="output">
+    <h2>Generated message</h2>
+    <!-- Generated message box is editable -->
+    <textarea id="message" aria-label="Generated message"></textarea>
+    <!-- Hidden subject input kept for JavaScript automation -->
+    <input id="subject" readonly style="display:none;">
+    <div id="status" class="status" role="status"></div>
+  </div>
+
+  <!-- Quick Calculator Widget -->
+  <div class="tools-wrapper">
+    <div class="tool-box">
+      <h3>Quick Calculator (+ / -)</h3>
+      <div class="calc-content">
+        <div class="calc-row">
+          <input type="number" id="calc-num1" placeholder="Value 1" value="0">
+        </div>
+        <div class="calc-row">
+          <input type="number" id="calc-num2" placeholder="Value 2" value="0">
+        </div>
+        <div class="calc-buttons">
+          <button type="button" class="calc-btn-add" onclick="calculate('+')">Add (+)</button>
+          <button type="button" class="calc-btn-sub" onclick="calculate('-')">Subtract (-)</button>
+        </div>
+        <!-- Editable result box -->
+        <input type="text" id="calc-result" value="Result: 0">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-document.write(unescape('%3C%21DOCTYPE%20html%3E%0D%0A%3Chtml%20lang%3D%22en%22%3E%0D%0A%3Chead%3E%0D%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0D%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%22%3E%0D%0A%3Ctitle%3ECWC%20VSK%20SPL%20Observation%3C/title%3E%0D%0A%0D%0A%3Cstyle%3E%0D%0A%20%20%20%20body%20%7B%0D%0A%20%20%20%20%20%20%20%20font-family%3A%20Arial%2C%20sans-serif%3B%0D%0A%20%20%20%20%20%20%20%20background%3A%20%23f2f5f9%3B%0D%0A%20%20%20%20%20%20%20%20display%3A%20flex%3B%0D%0A%20%20%20%20%20%20%20%20justify-content%3A%20center%3B%0D%0A%20%20%20%20%20%20%20%20align-items%3A%20center%3B%0D%0A%20%20%20%20%20%20%20%20min-height%3A%20100vh%3B%0D%0A%20%20%20%20%20%20%20%20margin%3A%200%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20.container%20%7B%0D%0A%20%20%20%20%20%20%20%20background%3A%20white%3B%0D%0A%20%20%20%20%20%20%20%20padding%3A%2025px%3B%0D%0A%20%20%20%20%20%20%20%20width%3A%20450px%3B%0D%0A%20%20%20%20%20%20%20%20max-width%3A%2090%25%3B%0D%0A%20%20%20%20%20%20%20%20border-radius%3A%2012px%3B%0D%0A%20%20%20%20%20%20%20%20box-shadow%3A%200%204px%2015px%20rgba%280%2C0%2C0%2C0.15%29%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20h2%20%7B%0D%0A%20%20%20%20%20%20%20%20text-align%3A%20center%3B%0D%0A%20%20%20%20%20%20%20%20color%3A%20%231a4d80%3B%0D%0A%20%20%20%20%20%20%20%20margin-top%3A%200%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20label%20%7B%0D%0A%20%20%20%20%20%20%20%20font-weight%3A%20bold%3B%0D%0A%20%20%20%20%20%20%20%20display%3A%20block%3B%0D%0A%20%20%20%20%20%20%20%20margin-top%3A%2015px%3B%0D%0A%20%20%20%20%20%20%20%20margin-bottom%3A%206px%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20input%2C%20textarea%20%7B%0D%0A%20%20%20%20%20%20%20%20width%3A%20100%25%3B%0D%0A%20%20%20%20%20%20%20%20box-sizing%3A%20border-box%3B%0D%0A%20%20%20%20%20%20%20%20padding%3A%2012px%3B%0D%0A%20%20%20%20%20%20%20%20font-size%3A%2016px%3B%0D%0A%20%20%20%20%20%20%20%20border%3A%201px%20solid%20%23aaa%3B%0D%0A%20%20%20%20%20%20%20%20border-radius%3A%206px%3B%0D%0A%20%20%20%20%20%20%20%20font-family%3A%20Arial%2C%20sans-serif%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20textarea%20%7B%0D%0A%20%20%20%20%20%20%20%20resize%3A%20vertical%3B%0D%0A%20%20%20%20%20%20%20%20height%3A%20110px%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20button%20%7B%0D%0A%20%20%20%20%20%20%20%20width%3A%20100%25%3B%0D%0A%20%20%20%20%20%20%20%20padding%3A%2012px%3B%0D%0A%20%20%20%20%20%20%20%20margin-top%3A%2015px%3B%0D%0A%20%20%20%20%20%20%20%20border%3A%20none%3B%0D%0A%20%20%20%20%20%20%20%20border-radius%3A%206px%3B%0D%0A%20%20%20%20%20%20%20%20color%3A%20white%3B%0D%0A%20%20%20%20%20%20%20%20font-size%3A%2016px%3B%0D%0A%20%20%20%20%20%20%20%20cursor%3A%20pointer%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20.gmail%20%7B%0D%0A%20%20%20%20%20%20%20%20background%3A%20green%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20.whatsapp%20%7B%0D%0A%20%20%20%20%20%20%20%20background%3A%20green%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20button%3Ahover%20%7B%0D%0A%20%20%20%20%20%20%20%20opacity%3A%200.9%3B%0D%0A%20%20%20%20%7D%0D%0A%3C/style%3E%0D%0A%3C/head%3E%0D%0A%0D%0A%3Cbody%3E%0D%0A%0D%0A%3Cdiv%20class%3D%22container%22%3E%0D%0A%0D%0A%20%20%20%20%3Ch2%3ECWC%20VSK%20SPL%20Observation%3C/h2%3E%0D%0A%0D%0A%20%20%20%20%3Clabel%20for%3D%22obsTime%22%3EObservation%20Time%3C/label%3E%0D%0A%20%20%20%20%3Cinput%0D%0A%20%20%20%20%20%20%20%20type%3D%22text%22%0D%0A%20%20%20%20%20%20%20%20id%3D%22obsTime%22%0D%0A%20%20%20%20%20%20%20%20placeholder%3D%22Enter%20time%2C%20e.g.%2011Z%22%0D%0A%20%20%20%20%20%20%20%20value%3D%22%20Z%22%0D%0A%20%20%20%20%3E%0D%0A%0D%0A%20%20%20%20%3Clabel%20for%3D%22gmailText%22%3EGmail%20Message%20Body%20Text%3C/label%3E%0D%0A%20%20%20%20%3Ctextarea%0D%0A%20%20%20%20%20%20%20%20id%3D%22gmailText%22%0D%0A%20%20%20%20%20%20%20%20placeholder%3D%22%22%0D%0A%20%20%20%20%3E%3C/textarea%3E%0D%0A%0D%0A%20%20%20%20%3Clabel%20for%3D%22obsDetails%22%3E%28WhatsApp%29%3C/label%3E%0D%0A%20%20%20%20%3Ctextarea%0D%0A%20%20%20%20%20%20%20%20id%3D%22obsDetails%22%0D%0A%20%20%20%20%3ECWC%20VSK%2843150%29%0D%0A%0D%0A%0D%0A%0D%0ATOTAL%20RAINFALL%20UPTO%20Z%3A%20%3C/textarea%3E%0D%0A%0D%0A%20%20%20%20%3Cbutton%20class%3D%22gmail%22%20onclick%3D%22openGmail%28%29%22%3E%0D%0A%20%20%20%20%20%20%20%20Open%20Gmail%0D%0A%20%20%20%20%3C/button%3E%0D%0A%0D%0A%20%20%20%20%3Cbutton%20class%3D%22whatsapp%22%20onclick%3D%22openWhatsApp%28%29%22%3E%0D%0A%20%20%20%20%20%20%20%20Open%20WhatsApp%0D%0A%20%20%20%20%3C/button%3E%0D%0A%0D%0A%3C/div%3E%0D%0A%0D%0A%3Cscript%3E%0D%0A%0D%0Aconst%20recipients%20%3D%20%5B%0D%0A%20%20%20%20%22amsschennai@gmail.com%22%2C%0D%0A%20%20%20%20%22apdata2021@gmail.com%22%2C%0D%0A%20%20%20%20%22MCAMARAVATI.WS@imd.gov.in%22%0D%0A%5D%3B%0D%0A%0D%0Afunction%20getCurrentDate%28%29%20%7B%0D%0A%20%20%20%20const%20now%20%3D%20new%20Date%28%29%3B%0D%0A%0D%0A%20%20%20%20const%20day%20%3D%20String%28now.getDate%28%29%29.padStart%282%2C%20%220%22%29%3B%0D%0A%20%20%20%20const%20month%20%3D%20String%28now.getMonth%28%29%20+%201%29.padStart%282%2C%20%220%22%29%3B%0D%0A%20%20%20%20const%20year%20%3D%20now.getFullYear%28%29%3B%0D%0A%0D%0A%20%20%20%20return%20%60%24%7Bday%7D.%24%7Bmonth%7D.%24%7Byear%7D%60%3B%0D%0A%7D%0D%0A%0D%0Afunction%20getSubject%28%29%20%7B%0D%0A%20%20%20%20let%20time%20%3D%20document.getElementById%28%22obsTime%22%29.value.trim%28%29%3B%0D%0A%0D%0A%20%20%20%20if%20%28time%20%3D%3D%3D%20%22%22%29%20%7B%0D%0A%20%20%20%20%20%20%20%20time%20%3D%20%2211Z%22%3B%0D%0A%20%20%20%20%7D%0D%0A%0D%0A%20%20%20%20return%20%60%24%7Btime%7D%20SPL%20OBS%20OF%20CWC%20VSK%20%2843150%29%20DATED%20%24%7BgetCurrentDate%28%29%7D%60%3B%0D%0A%7D%0D%0A%0D%0Afunction%20openGmail%28%29%20%7B%0D%0A%20%20%20%20const%20subject%20%3D%20getSubject%28%29%3B%0D%0A%20%20%20%20const%20gmailBody%20%3D%20document.getElementById%28%22gmailText%22%29.value%3B%0D%0A%0D%0A%20%20%20%20const%20gmailURL%20%3D%0D%0A%20%20%20%20%20%20%20%20%22https%3A//mail.google.com/mail/%3Fview%3Dcm%22%20+%0D%0A%20%20%20%20%20%20%20%20%22%26to%3D%22%20+%20encodeURIComponent%28recipients.join%28%22%2C%22%29%29%20+%0D%0A%20%20%20%20%20%20%20%20%22%26su%3D%22%20+%20encodeURIComponent%28subject%29%20+%0D%0A%20%20%20%20%20%20%20%20%22%26body%3D%22%20+%20encodeURIComponent%28gmailBody%29%3B%0D%0A%0D%0A%20%20%20%20window.open%28gmailURL%2C%20%27_blank%27%29%3B%0D%0A%7D%0D%0A%0D%0Afunction%20openWhatsApp%28%29%20%7B%0D%0A%20%20%20%20const%20subject%20%3D%20getSubject%28%29%3B%0D%0A%20%20%20%20const%20detailsText%20%3D%20document.getElementById%28%22obsDetails%22%29.value%3B%0D%0A%0D%0A%20%20%20%20const%20message%20%3D%0D%0A%20%20%20%20%20%20%20%20subject%20+%0D%0A%20%20%20%20%20%20%20%20%22%5Cn%5Cn%5Cn%22%20+%0D%0A%20%20%20%20%20%20%20%20detailsText%20+%0D%0A%20%20%20%20%20%20%20%20%22%5Cn%5CnTO%3A%5Cn%22%20+%0D%0A%20%20%20%20%20%20%20%20recipients.join%28%22%5Cn%22%29%3B%0D%0A%0D%0A%20%20%20%20const%20whatsappURL%20%3D%0D%0A%20%20%20%20%20%20%20%20%22https%3A//wa.me/%3Ftext%3D%22%20+%0D%0A%20%20%20%20%20%20%20%20encodeURIComponent%28message%29%3B%0D%0A%0D%0A%20%20%20%20window.location.href%20%3D%20whatsappURL%3B%0D%0A%7D%0D%0A%0D%0A%3C/script%3E%0D%0A%0D%0A%3C/body%3E%0D%0A%3C/html%3E'));
+(() => {
+  const $ = id => document.getElementById(id);
+  const recipients = [
+    "amsschennai@gmail.com",
+    "apdata2021@gmail.com",
+    "MCAMARAVATI.WS@imd.gov.in"
+  ];
+
+  // Default date is today's local date.
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  $("obsDate").value = `${yyyy}-${mm}-${dd}`;
+
+  function dateParts() {
+    const value = $("obsDate").value;
+    if (!value) throw new Error("Please select an observation date.");
+    const [year, month, day] = value.split("-").map(Number);
+    return { year, month, day, yy: String(year % 100).padStart(2, "0"),
+      dd: String(day).padStart(2,"0"), display: `${String(day).padStart(2,"0")}.${String(month).padStart(2,"0")}.${year}` };
+  }
+
+  function makeMessage() {
+    const d = dateParts();
+    const time = $("obsTime").value;
+    const fields = ["Nddff", "PPPW1", "wwRRR", "pressure"];
+    const values = fields.map(id => $(id).value.trim());
+    if (values.some(v => !v)) throw new Error("Please fill in all SYNOP groups.");
+    const yyggiw = `${d.dd}${time}4`;
+    const extra = $("extra").value.trim();
+    
+    let mainMsg = `SSSS ${yyggiw} 43150 ${values[0]} ${values[1]} ${values[2]} ${values[3]}=`;
+    let rainfallLine = `TOTAL RAINFALL UPTO ${time}Z: `;
+    
+    const lines = [mainMsg, "", rainfallLine];
+    if (extra) lines.push(extra);
+    
+    $("message").value = lines.join("\n");
+    $("subject").value = `${time}Z SPL OBS CWCVSK43150 DTD:${d.display}`;
+  }
+
+  // Enforce maximum 5 characters for group inputs and trigger updates
+  ["Nddff", "PPPW1", "wwRRR", "pressure"].forEach(id => {
+    const el = $(id);
+    el.addEventListener("input", () => {
+      if (el.value.length > 5) {
+        el.value = el.value.slice(0, 5);
+      }
+      try { makeMessage(); } catch (_) {}
+    });
+  });
+
+  // Live updates across remaining inputs/selects
+  ["obsDate", "obsTime", "extra"].forEach(id => {
+    $(id).addEventListener("input", () => { try { makeMessage(); } catch (_) {} });
+    $(id).addEventListener("change", () => { try { makeMessage(); } catch (_) {} });
+  });
+
+  $("copyBtn").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText($("message").value);
+      $("status").textContent = "Message copied to clipboard.";
+    } catch (e) {
+      $("message").focus(); $("message").select();
+      try { document.execCommand("copy"); $("status").textContent = "Message copied."; }
+      catch (_) { $("status").textContent = "Select the message and copy it manually."; }
+    }
+  });
+
+  $("waBtn").addEventListener("click", () => {
+    try {
+      const text = `${$("subject").value}\n\n${$("message").value}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+    } catch (e) { $("status").textContent = e.message; }
+  });
+
+  $("gmailBtn").addEventListener("click", () => {
+    try {
+      makeMessage(); // Ensures subject uses the selected time and date format
+      const url = "https://mail.google.com/mail/?view=cm&fs=1" +
+        "&to=" + encodeURIComponent(recipients.join(",")) +
+        "&su=" + encodeURIComponent($("subject").value) +
+        "&body=" + encodeURIComponent($("message").value);
+      window.open(url, "_blank");
+    } catch (e) { $("status").textContent = e.message; }
+  });
+})();
+
+/* Two-Input Calculator Function */
+function calculate(op) {
+  let num1 = parseFloat(document.getElementById("calc-num1").value);
+  let num2 = parseFloat(document.getElementById("calc-num2").value);
+
+  if (isNaN(num1)) num1 = 0;
+  if (isNaN(num2)) num2 = 0;
+
+  let result = 0;
+  if (op === "+") {
+    result = num1 + num2;
+  } else if (op === "-") {
+    result = num1 - num2;
+  }
+
+  result = Math.round(result * 1000000) / 1000000;
+  document.getElementById("calc-result").value = `Result: ${result}`;
+}
 </script>
+</body>
+</html>
