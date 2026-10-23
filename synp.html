@@ -416,7 +416,7 @@ const commonGroups = [
 
 const groups03 = [
   "8NhCLCMCH", "222//", "20000", "333", "1omax",
-  "2omin", "579daec", "58/59prchng", "6r/f",
+  "2omin", "57Cdaec", "58/59prchng", "6r/f",
   "8NsChshs1", "8NsChshs2", "8NsChshs3",
   "8NsChshs4", "555", "R24", "10seasonal"
 ];
@@ -437,7 +437,9 @@ const fixedPrefixes = {
   "1snTTT": "10",
   "2snTdTdTd": "20",
   "3PoPoPoPo": "3",
-  "4PPPP": "4"
+  "4PPPP": "4",
+  "1omax": "10",
+  "2omin": "20",
 };
 
 const savedValues = {};
@@ -472,7 +474,7 @@ function getGroupValue(group, utc) {
 
     if (utc === "21") {
       const previous = new Date();
-      previous.setUTCDate(previous.getUTCDate());
+      previous.setUTCDate(previous.getUTCDate() - 1);
       day = previous.getUTCDate();
     }
 
@@ -481,7 +483,7 @@ function getGroupValue(group, utc) {
 
   if (group === "IIiii") return "43150";
 
-  if (fixedPrefixes[group]) {
+  if (fixedPrefixes[group] !== undefined) {
     return fixedPrefixes[group] +
       (savedValues[utc + "_" + group] || "");
   }
@@ -534,22 +536,32 @@ function createField(group, utc) {
     input.disabled = true;
   }
 
-  if (fixedPrefixes[group]) {
-    input.placeholder = fixedPrefixes[group];
+  if (fixedPrefixes[group] !== undefined) {
+    const prefix = fixedPrefixes[group];
+    const totalLength = 5;
+    const userLen = totalLength - prefix.length;
+    if (userLen > 0) {
+      input.setAttribute("maxlength", totalLength);
+    }
+    input.placeholder = prefix;
+
     input.addEventListener("input", () => {
       let value = input.value;
 
-      if (value.startsWith(fixedPrefixes[group])) {
-        value = value.slice(fixedPrefixes[group].length);
+      if (value.startsWith(prefix)) {
+        value = value.slice(prefix.length);
+      }
+
+      if (value.length > userLen) {
+        value = value.slice(0, userLen);
       }
 
       savedValues[utc + "_" + group] = value;
-      input.value = fixedPrefixes[group] + value;
+      input.value = prefix + value;
       updatePreview();
     });
 
     input.addEventListener("focus", () => {
-      const prefix = fixedPrefixes[group];
       requestAnimationFrame(() => {
         input.setSelectionRange(
           prefix.length, input.value.length
@@ -557,8 +569,14 @@ function createField(group, utc) {
       });
     });
   } else {
+    input.setAttribute("maxlength", "5");
     input.addEventListener("input", () => {
-      savedValues[utc + "_" + group] = input.value;
+      let value = input.value;
+      if (value.length > 5) {
+        value = value.slice(0, 5);
+      }
+      savedValues[utc + "_" + group] = value;
+      input.value = value;
       updatePreview();
     });
   }
@@ -623,7 +641,7 @@ function getSubject() {
 
   if (utcSelect.value === "21") {
     const previousDay = new Date();
-    previousDay.setUTCDate(previousDay.getUTCDate());
+    previousDay.setUTCDate(previousDay.getUTCDate() - 1);
 
     const dd = String(previousDay.getUTCDate()).padStart(2, "0");
     const mm = String(previousDay.getUTCMonth() + 1).padStart(2, "0");
