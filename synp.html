@@ -472,7 +472,7 @@ function getGroupValue(group, utc) {
 
     if (utc === "21") {
       const previous = new Date();
-      previous.setUTCDate(previous.getUTCDate() - 1);
+      previous.setUTCDate(previous.getUTCDate());
       day = previous.getUTCDate();
     }
 
@@ -502,6 +502,19 @@ function createField(group, utc) {
 
   const label = document.createElement("label");
   label.textContent = group;
+  wrapper.append(label);
+
+  // Add red sub-label for 7wwW1W2 group when UTC is even (00, 06, 12, 18)
+  if (group === "7wwW1W2" && Number(utc) % 6 === 0) {
+    const subLabel = document.createElement("span");
+    subLabel.textContent = "PAST 6 HOURS";
+    subLabel.style.color = "red";
+    subLabel.style.fontSize = "9px";
+    subLabel.style.display = "block";
+    subLabel.style.marginBottom = "3px";
+    subLabel.style.fontWeight = "bold";
+    wrapper.append(subLabel);
+  }
 
   const input = document.createElement("input");
   input.type = "text";
@@ -550,7 +563,7 @@ function createField(group, utc) {
     });
   }
 
-  wrapper.append(label, input);
+  wrapper.append(input);
   return wrapper;
 }
 
@@ -610,7 +623,7 @@ function getSubject() {
 
   if (utcSelect.value === "21") {
     const previousDay = new Date();
-    previousDay.setUTCDate(previousDay.getUTCDate() - 1);
+    previousDay.setUTCDate(previousDay.getUTCDate());
 
     const dd = String(previousDay.getUTCDate()).padStart(2, "0");
     const mm = String(previousDay.getUTCMonth() + 1).padStart(2, "0");
