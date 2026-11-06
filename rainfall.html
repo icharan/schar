@@ -1,0 +1,389 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rainfall Calculator</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 15px;
+    background: #f2f5f9;
+    color: #222;
+}
+
+h2, h3 {
+    color: #174c75;
+}
+
+.container {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 7px #ccc;
+    margin-bottom: 18px;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.input-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.input-item label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #174c75;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 9px 3px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+input:focus {
+    border-color: #1675bd;
+    outline: 2px solid #cce5ff;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    color: white;
+}
+
+.calculate { background: #087b43; }
+.reset { background: #c0392b; }
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+#horizontalTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#horizontalTable th,
+#horizontalTable td {
+    border: 1px solid #ccc;
+    padding: 10px 3px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+#horizontalTable th {
+    background: #174c75;
+    color: white;
+    font-size: 12px;
+}
+
+#horizontalTable td {
+    background: #eef5fa;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#horizontalTable tr:nth-child(3) th {
+    background: #087b43;
+}
+
+#horizontalTable tr:nth-child(4) td {
+    background: #e5f5e9;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.summary-box {
+    background: #e8f3fb;
+    padding: 15px;
+    border-radius: 7px;
+    text-align: center;
+    border-left: 4px solid #1675bd;
+}
+
+.summary-box strong {
+    display: block;
+    color: #174c75;
+    margin-bottom: 8px;
+}
+
+.summary-value {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+    .input-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media print {
+    .buttons, .input-section {
+        display: none;
+    }
+
+    body { background: white; }
+
+    .container { box-shadow: none; }
+
+    #horizontalTable th,
+    #horizontalTable td {
+        padding: 6px 2px;
+        font-size: 9px;
+    }
+
+    @page {
+        size: landscape;
+        margin: 10mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h2>Recording Rain Gauge – 24 Hour Rainfall Calculator</h2>
+
+<div class="container input-section">
+
+<div class="input-grid">
+
+    <div class="input-item"><label>08:00</label><input type="number" id="r0" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>09:00</label><input type="number" id="r1" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>10:00</label><input type="number" id="r2" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>11:00</label><input type="number" id="r3" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>12:00</label><input type="number" id="r4" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>13:00</label><input type="number" id="r5" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>14:00</label><input type="number" id="r6" value="0" min="0" step="0.1"></div>
+
+    <div class="input-item"><label>15:00</label><input type="number" id="r7" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>16:00</label><input type="number" id="r8" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>17:00</label><input type="number" id="r9" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>18:00</label><input type="number" id="r10" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>19:00</label><input type="number" id="r11" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>20:00</label><input type="number" id="r12" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>21:00</label><input type="number" id="r13" value="0" min="0" step="0.1"></div>
+
+    <div class="input-item"><label>22:00</label><input type="number" id="r14" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>23:00</label><input type="number" id="r15" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>00:00</label><input type="number" id="r16" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>01:00</label><input type="number" id="r17" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>02:00</label><input type="number" id="r18" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>03:00</label><input type="number" id="r19" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>04:00</label><input type="number" id="r20" value="0" min="0" step="0.1"></div>
+
+    <div class="input-item"><label>05:00</label><input type="number" id="r21" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>06:00</label><input type="number" id="r22" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>07:00</label><input type="number" id="r23" value="0" min="0" step="0.1"></div>
+    <div class="input-item"><label>08:00 (Next day)</label><input type="number" id="r24" value="0" min="0" step="0.1"></div>
+
+</div>
+
+<div class="buttons">
+    <button class="calculate" onclick="calculateRainfall()">Calculate Rainfall</button>
+    <button class="reset" onclick="resetAll()">Reset</button>
+</div>
+
+<div id="error" class="error"></div>
+</div>
+
+<div class="container" id="resultSection" style="display:none;">
+    <h3>Hourly Rainfall Output (Four-Digit Format)</h3>
+    <div class="table-scroll">
+        <table id="horizontalTable">
+            <tbody id="resultBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container" id="summarySection" style="display:none;">
+    <h3>24-Hour Rainfall Summary</h3>
+
+    <div class="summary">
+        <div class="summary-box">
+            <strong>Total Rainfall</strong>
+            <div class="summary-value" id="total">0.0 mm</div>
+        </div>
+
+        <div class="summary-box">
+            <strong>Maximum Hourly Rainfall</strong>
+            <div class="summary-value" id="maximum">0.0 mm</div>
+        </div>
+
+        <div class="summary-box">
+            <strong>Time of Maximum Rainfall</strong>
+            <div class="summary-value" id="maxTime">--</div>
+        </div>
+
+        <div class="summary-box">
+            <strong>Maximum Rainfall (4-digit)</strong>
+            <div class="summary-value" id="maxCode">0000</div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="calculate" onclick="window.print()">Print Report</button>
+    </div>
+</div>
+
+<script>
+
+const times = [];
+
+for (let i = 0; i <= 24; i++) {
+    let hour = (8 + i) % 24;
+    times.push(String(hour).padStart(2, "0") + ":00");
+}
+
+function fourDigit(value) {
+    return String(Math.round(value * 10)).padStart(4, "0");
+}
+
+function calculateRainfall() {
+
+    const readings = [];
+
+    document.getElementById("error").innerText = "";
+
+    for (let i = 0; i <= 24; i++) {
+
+        const input = document.getElementById("r" + i);
+        const value = input.value.trim();
+        const reading = value === "" ? 0 : Number(value);
+
+        if (!Number.isFinite(reading) || reading < 0) {
+            document.getElementById("error").innerText =
+                "Enter valid non-negative readings.";
+            input.focus();
+            return;
+        }
+
+        readings.push(reading);
+    }
+
+    for (let i = 1; i <= 24; i++) {
+        if (readings[i] < readings[i - 1]) {
+            document.getElementById("error").innerText =
+                "Cumulative reading cannot be less than previous reading. Check " +
+                times[i] + ".";
+            document.getElementById("r" + i).focus();
+            return;
+        }
+    }
+
+    let total = 0;
+    let maximum = -1;
+    let maxTime = "";
+    let hourlyRainfall = [];
+    let timePeriods = [];
+
+    for (let i = 0; i < 24; i++) {
+
+        let rainfall = Math.round((readings[i + 1] - readings[i]) * 10) / 10;
+
+        hourlyRainfall.push(rainfall);
+        total += rainfall;
+
+        let startHour = String((8 + i) % 24).padStart(2, "0");
+        let endHour = String((9 + i) % 24).padStart(2, "0");
+
+        let period = startHour + "–" + endHour;
+        timePeriods.push(period);
+
+        if (rainfall > maximum) {
+            maximum = rainfall;
+            maxTime = period;
+        }
+    }
+
+    let output = "<tr>";
+
+    for (let i = 0; i < 16; i++) {
+        output += `<th>${timePeriods[i]}</th>`;
+    }
+
+    output += "</tr><tr>";
+
+    for (let i = 0; i < 16; i++) {
+        output += `<td>${fourDigit(hourlyRainfall[i])}</td>`;
+    }
+
+    output += "</tr><tr>";
+
+    for (let i = 16; i < 24; i++) {
+        output += `<th>${timePeriods[i]}</th>`;
+    }
+
+    output += "</tr><tr>";
+
+    for (let i = 16; i < 24; i++) {
+        output += `<td>${fourDigit(hourlyRainfall[i])}</td>`;
+    }
+
+    output += "</tr>";
+
+    document.getElementById("resultBody").innerHTML = output;
+
+    document.getElementById("total").innerText = total.toFixed(1) + " mm";
+    document.getElementById("maximum").innerText = maximum.toFixed(1) + " mm";
+    document.getElementById("maxTime").innerText = maxTime;
+    document.getElementById("maxCode").innerText = fourDigit(maximum);
+
+    document.getElementById("resultSection").style.display = "block";
+    document.getElementById("summarySection").style.display = "block";
+}
+
+function resetAll() {
+
+    for (let i = 0; i <= 24; i++) {
+        document.getElementById("r" + i).value = "0";
+    }
+
+    document.getElementById("resultSection").style.display = "none";
+    document.getElementById("summarySection").style.display = "none";
+    document.getElementById("error").innerText = "";
+}
+
+</script>
+
+</body>
+</html>
