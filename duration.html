@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f8;
+    padding: 20px;
+}
+.container {
+    max-width: 650px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px #ccc;
+}
+.info {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+.rain-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+.duration {
+    background: #f0f7ff;
+    font-weight: bold;
+}
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 5px 3px;
+}
+.add { background: #1976d2; color: white; }
+.reset { background: #d32f2f; color: white; }
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e8f5e9;
+    border-radius: 8px;
+}
+.total {
+    font-size: 23px;
+    font-weight: bold;
+    color: #087b35;
+    text-align: center;
+}
+.error {
+    color: red;
+    text-align: center;
+}
+@media(max-width: 450px) {
+    .rain-row { gap: 5px; }
+    input { font-size: 14px; padding: 8px 3px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="info">
+    Enter time in HHMM format
+</div>
+
+<div class="rain-row">
+    <strong>Start Time</strong>
+    <strong>End Time</strong>
+    <strong>Duration</strong>
+</div>
+
+<div id="rainPeriods"></div>
+
+<button type="button" class="add" id="addButton">+ Add Period</button>
+<button type="button" class="reset" id="resetButton">Reset</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+const observationStart = 510;
+const observationLength = 1440;
+
+const periods = document.getElementById("rainPeriods");
+const output = document.getElementById("output");
+
+function addRow() {
+    const row = document.createElement("div");
+    row.className = "rain-row";
+
+    const start = document.createElement("input");
+    start.type = "text";
+    start.className = "start";
+    start.placeholder = "HHMM";
+    start.maxLength = 4;
+    start.inputMode = "numeric";
+
+    const end = document.createElement("input");
+    end.type = "text";
+    end.className = "end";
+    end.placeholder = "HHMM";
+    end.maxLength = 4;
+    end.inputMode = "numeric";
+
+    const duration = document.createElement("input");
+    duration.type = "text";
+    duration.className = "duration";
+    duration.placeholder = "----";
+    duration.readOnly = true;
+
+    row.append(start, end, duration);
+    periods.appendChild(row);
+
+    start.addEventListener("input", calculate);
+    end.addEventListener("input", calculate);
+}
+
+function toMinutes(value) {
+    if (!/^\d{4}$/.test(value)) return null;
+
+    const h = Number(value.substring(0, 2));
+    const m = Number(value.substring(2, 4));
+
+    if (h > 23 || m > 59) return null;
+
+    return h * 60 + m;
+}
+
+function formatDuration(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+
+    return String(h).padStart(2, "0") +
+           String(m).padStart(2, "0");
+}
+
+function getObservationMinute(value) {
+    const minutes = toMinutes(value);
+    if (minutes === null) return null;
+
+    return (minutes - observationStart + 1440) % 1440;
+}
+
+function calculate() {
+    let total = 0;
+    let error = "";
+    let hasCompletePeriod = false;
+
+    const rows = periods.querySelectorAll(".rain-row");
+
+    rows.forEach((row, index) => {
+        const startText = row.querySelector(".start").value.trim();
+        const endText = row.querySelector(".end").value.trim();
+        const durationInput = row.querySelector(".duration");
+
+        durationInput.value = "";
+
+        if (startText === "" && endText === "") return;
+        if (startText === "" || endText === "") return;
+
+        let start = getObservationMinute(startText);
+        let end = getObservationMinute(endText);
+
+        if (start === null || end === null) {
+            error = "Invalid time in row " + (index + 1) +
+                    ". Enter valid HHMM times.";
+            return;
+        }
+
+        if (end <= start) {
+            end += 1440;
+        }
+
+        if (end > observationLength) {
+            error = "Row " + (index + 1) +
+                    " is outside the 0830 to next day 0830 observation period.";
+            return;
+        }
+
+        const duration = end - start;
+
+        durationInput.value = formatDuration(duration);
+        total += duration;
+        hasCompletePeriod = true;
+    });
+
+    if (error) {
+        output.innerHTML = '<p class="error">' + error + '</p>';
+        return;
+    }
+
+    if (total > observationLength) {
+        output.innerHTML =
+            '<p class="error">Total duration exceeds 24 hours. Check overlapping periods.</p>';
+        return;
+    }
+
+    if (!hasCompletePeriod) {
+        output.innerHTML = "";
+        return;
+    }
+
+    // Display ONLY total rainfall duration
+    output.innerHTML = `
+        <div class="result">
+            <div class="total">
+                Total Rainfall Duration: ${formatDuration(total)}
+            </div>
+        </div>
+    `;
+}
+
+document.getElementById("addButton").addEventListener("click", addRow);
+
+document.getElementById("resetButton").addEventListener("click", function() {
+    periods.innerHTML = "";
+    output.innerHTML = "";
+
+    for (let i = 0; i < 5; i++) {
+        addRow();
+    }
+});
+ 
+for (let i = 0; i < 5; i++) {
+    addRow();
+}
+</script>
+</body>
+</html>
+  
