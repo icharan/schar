@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNOP Report Entry with Calculator & Converter</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 12px;
+    background: #f4f6f8;
+    color: #222;
+    zoom: 1.00; /* Scales the entire page up to 125% by default */
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: auto;
+    background: white;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin: 0 0 14px;
+  }
+
+  .utc-area {
+    margin-bottom: 14px;
+  }
+
+  .utc-area label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  #utc {
+    width: 105px;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    background: white;
+  }
+
+  /* Exactly 3 rows, with 9 boxes in each row */
+  .synop-row {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .field {
+    min-width: 0;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: #444;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .field input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 4px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+  }
+
+  .field input:disabled {
+    background: #e9edf1;
+    color: #333;
+    opacity: 1;
+  }
+
+  .preview-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 14px 0 6px;
+  }
+
+  #subject, #report {
+    padding: 10px;
+    background: #f0f2f4;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+  }
+
+  #report {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Tools Wrapper (Calculator + UTC to IST Converter + Image Box) */
+  .tools-wrapper {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .tool-box {
+    padding: 12px;
+    background: #eaeef2;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    flex: 1;
+    min-width: 260px;
+    max-width: 350px;
+  }
+
+  .tool-box h3 {
+    font-size: 13px;
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+
+  /* Two-Input Calculator Styles */
+  .calc-content {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .calc-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .calc-row input {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: white;
+    width: 100%;
+  }
+
+  .calc-buttons {
+    display: flex;
+    gap: 6px;
+  }
+
+  .calc-buttons button {
+    flex: 1;
+    padding: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+  }
+
+  .calc-btn-add {
+    background: #1769aa;
+  }
+
+  .calc-btn-sub {
+    background: #c0392b;
+  }
+
+  .calc-buttons button:hover {
+    filter: brightness(0.9);
+  }
+
+  #calc-result {
+    font-weight: bold;
+    color: #222;
+    background: white;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    text-align: right;
+  }
+
+  /* UTC to IST Converter Styles */
+  .converter-content {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .converter-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .converter-row input {
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: white;
+    text-align: center;
+  }
+
+  #conv-utc-hh {
+    width: 50px;
+  }
+
+  #conv-utc-mm {
+    width: 50px;
+  }
+
+  #ist-result {
+    font-weight: bold;
+    color: #1769aa;
+    background: white;
+    padding: 7px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Image Box & Zoom Styles */
+  .image-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    padding: 4px;
+    min-height: 110px;
+  }
+
+  .image-content img {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 2px;
+    cursor: zoom-in;
+    transition: transform 0.2s;
+  }
+
+  .image-content img:hover {
+    transform: scale(1.03);
+  }
+
+  /* Modal Overlay for Zoomed Image */
+  #imageModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out;
+  }
+
+  #imageModal img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  button.action-btn {
+    flex: 1;
+    padding: 11px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  #copyBtn {
+    background: #1769aa;
+    color: white;
+  }
+
+  #gmailBtn {
+    background: #18864b;
+    color: white;
+  }
+
+  button.action-btn:hover {
+    filter: brightness(.94);
+  }
+
+  @media (max-width: 700px) {
+    body { margin: 5px; }
+    .container { padding: 8px; }
+    .synop-row { gap: 4px; }
+    .field label { font-size: 9px; }
+    .field input {
+      height: 30px;
+      padding: 2px;
+      font-size: 10px;
+    }
+  }
+
+/* Rainfall duration calculator - styles scoped to its own section */
+#rainfallTool {
+    max-width: 650px;
+    margin: 24px auto 10px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px #ccc;
+    color: #222;
+}
+#rainfallTool .rain-info {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+#rainfallTool .rain-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+#rainfallTool input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+#rainfallTool .duration {
+    background: #f0f7ff;
+    font-weight: bold;
+}
+#rainfallTool button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 5px 3px;
+}
+#rainfallTool .add { background: #1976d2; color: white; }
+#rainfallTool .reset { background: #d32f2f; color: white; }
+#rainfallTool .result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e8f5e9;
+    border-radius: 8px;
+}
+#rainfallTool .total {
+    font-size: 23px;
+    font-weight: bold;
+    color: #087b35;
+    text-align: center;
+}
+#rainfallTool .error {
+    color: red;
+    text-align: center;
+}
+@media(max-width: 450px) {
+    #rainfallTool .rain-row { gap: 5px; }
+    #rainfallTool input { font-size: 14px; padding: 8px 3px; }
+    #rainfallTool { padding: 12px; }
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="utc-area">
+    <label for="utc">Observation UTC</label>
+    <select id="utc">
+      <option value="00">00 UTC</option>
+      <option value="03" selected>03 UTC</option>
+      <option value="06">06 UTC</option>
+      <option value="09">09 UTC</option>
+      <option value="12">12 UTC</option>
+      <option value="15">15 UTC</option>
+      <option value="18">18 UTC</option>
+      <option value="21">21 UTC</option>
+    </select>
+  </div>
+
+  <div id="rows"></div>
+
+  <div class="preview-title">Email subject</div>
+  <div id="subject"></div>
+
+  <div class="preview-title">Generated SYNOP report</div>
+  <div id="report"></div>
+
+  <div class="buttons">
+    <button id="copyBtn" class="action-btn" type="button">Copy Report</button>
+    <button id="gmailBtn" class="action-btn" type="button">Open Gmail</button>
+  </div>
+
+  <!-- Side-by-side Tools Widget -->
+  <div class="tools-wrapper">
+    <!-- Two-Input Calculator (Add & Subtract) -->
+    <div class="tool-box">
+      <h3>Quick Calculator (+ / -)</h3>
+      <div class="calc-content">
+        <div class="calc-row">
+          <input type="number" id="calc-num1" placeholder="Value 1" value="0">
+        </div>
+        <div class="calc-row">
+          <input type="number" id="calc-num2" placeholder="Value 2" value="0">
+        </div>
+        <div class="calc-buttons">
+          <button type="button" class="calc-btn-add" onclick="calculate('+')">Add (+)</button>
+          <button type="button" class="calc-btn-sub" onclick="calculate('-')">Subtract (-)</button>
+        </div>
+        <div id="calc-result">Result: 0</div>
+      </div>
+    </div>
+
+    <!-- UTC to IST Converter -->
+    <div class="tool-box">
+      <h3>UTC to IST Converter</h3>
+      <div class="converter-content">
+        <div class="converter-row">
+          <label style="font-size: 12px; min-width: 35px;">UTC:</label>
+          <input type="number" id="conv-utc-hh" value="03" min="0" max="23" placeholder="HH" oninput="convertTime()">
+          <span>:</span>
+          <input type="number" id="conv-utc-mm" value="00" min="0" max="59" placeholder="MM" oninput="convertTime()">
+        </div>
+        <div class="converter-row">
+          <label style="font-size: 12px; min-width: 35px;">IST:</label>
+          <div id="ist-result">08:30 IST</div>
+        </div>
+        <div style="font-size: 11px; color: #666; margin-top: 4px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Box Widget -->
+    <div class="tool-box">
+      <h3>Reference Image</h3>
+      <div class="image-content">
+        <img id="tool-image" src="SYNOP" alt="Reference Image" onclick="openModal()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Zoom Modal -->
+<div id="imageModal" onclick="closeModal()">
+  <img id="modalImage" src="SYNOP" alt="Zoomed Reference Image">
+</div>
+
+<script>
+const utcSelect = document.getElementById("utc");
+const rowsContainer = document.getElementById("rows");
+
+const commonGroups = [
+  "AAXX", "YYGGiw", "IIiii", "iRiXhVV", "Nddff",
+  "1snTTT", "2snTdTdTd", "3PoPoPoPo", "4PPPP", "7wwW1W2"
+];
+
+const groups03 = [
+  "8NhCLCMCH", "222//", "20000", "333", "1omax",
+  "2omin", "57Cdaec", "58/59prchng", "6r/f",
+  "8NsChshs1", "8NsChshs2", "8NsChshs3",
+  "8NsChshs4", "555", "R24", "10seasonal"
+];
+
+const groups12 = [
+  "8NhCLCMCH", "222//", "20000", "333", "57Cdaec",
+  "1omax", "58/59prchng", "6r/f",
+  "8NsChshs1", "8NsChshs2", "8NsChshs3",
+  "8NsChshs4"
+];
+
+const otherGroups = [
+  "8NhCLCMCH", "333", "57Cdaec", "58/59prchng",
+  "6r/f", "8NsChshs1", "8NsChshs2", "8NsChshs3", "8NsChshs4"
+];
+
+const fixedPrefixes = {
+  "1snTTT": "10",
+  "2snTdTdTd": "20",
+  "3PoPoPoPo": "3",
+  "4PPPP": "4",
+  "1omax": "10",
+  "2omin": "20",
+};
+
+const savedValues = {};
+
+function getGroups(utc) {
+  if (utc === "03") return [...commonGroups, ...groups03];
+  if (utc === "12") return [...commonGroups, ...groups12];
+  return [...commonGroups, ...otherGroups];
+}
+
+function getDateParts() {
+  const now = new Date();
+  return {
+    day: String(now.getUTCDate()).padStart(2, "0"),
+    month: String(now.getUTCMonth() + 1).padStart(2, "0"),
+    year: now.getUTCFullYear()
+  };
+}
+
+function getDateText() {
+  const d = getDateParts();
+  return `${d.day}.${d.month}.${d.year}`;
+}
+
+function getGroupValue(group, utc) {
+  if (group === "AAXX") return "AAXX";
+
+  const d = getDateParts();
+
+  if (group === "YYGGiw") {
+    let day = Number(d.day);
+
+    if (utc === "21") {
+      const previous = new Date();
+      previous.setUTCDate(previous.getUTCDate());
+      day = previous.getUTCDate();
+    }
+
+    return String(day).padStart(2, "0") + utc + "4";
+  }
+
+  if (group === "IIiii") return "43150";
+
+  if (fixedPrefixes[group] !== undefined) {
+    return fixedPrefixes[group] +
+      (savedValues[utc + "_" + group] || "");
+  }
+
+  if (group === "333" || group === "555") return group;
+
+  if ((utc === "03" || utc === "12") &&
+      (group === "222//" || group === "20000")) {
+    return group;
+  }
+
+  return savedValues[utc + "_" + group] || "";
+}
+
+function createField(group, utc) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "field";
+
+  const label = document.createElement("label");
+  label.textContent = group;
+  wrapper.append(label);
+
+  // Add red sub-label for 7wwW1W2 group when UTC is even (00, 06, 12, 18)
+  if (group === "7wwW1W2" && Number(utc) % 6 === 0) {
+    const subLabel = document.createElement("span");
+    subLabel.textContent = "PAST 6 HOURS";
+    subLabel.style.color = "red";
+    subLabel.style.fontSize = "9px";
+    subLabel.style.display = "block";
+    subLabel.style.marginBottom = "3px";
+    subLabel.style.fontWeight = "bold";
+    wrapper.append(subLabel);
+  }
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.autocomplete = "off";
+  input.value = getGroupValue(group, utc);
+  input.setAttribute("aria-label", group);
+
+  const isAutomatic = [
+    "AAXX", "YYGGiw", "IIiii", "333", "555"
+  ].includes(group);
+
+  const isFixedSpecialGroup =
+    (utc === "03" || utc === "12") &&
+    (group === "222//" || group === "20000");
+
+  if (isAutomatic || isFixedSpecialGroup) {
+    input.disabled = true;
+  }
+
+  if (fixedPrefixes[group] !== undefined) {
+    const prefix = fixedPrefixes[group];
+    const totalLength = 5;
+    const userLen = totalLength - prefix.length;
+    if (userLen > 0) {
+      input.setAttribute("maxlength", totalLength);
+    }
+    input.placeholder = prefix;
+
+    input.addEventListener("input", () => {
+      let value = input.value;
+
+      if (value.startsWith(prefix)) {
+        value = value.slice(prefix.length);
+      }
+
+      if (value.length > userLen) {
+        value = value.slice(0, userLen);
+      }
+
+      savedValues[utc + "_" + group] = value;
+      input.value = prefix + value;
+      updatePreview();
+    });
+
+    input.addEventListener("focus", () => {
+      requestAnimationFrame(() => {
+        input.setSelectionRange(
+          prefix.length, input.value.length
+        );
+      });
+    });
+  } else {
+    input.setAttribute("maxlength", "5");
+    input.addEventListener("input", () => {
+      let value = input.value;
+      if (value.length > 5) {
+        value = value.slice(0, 5);
+      }
+      savedValues[utc + "_" + group] = value;
+      input.value = value;
+      updatePreview();
+    });
+  }
+
+  wrapper.append(input);
+  return wrapper;
+}
+
+function renderForm() {
+  const utc = utcSelect.value;
+  const groups = getGroups(utc);
+
+  rowsContainer.replaceChildren();
+
+  for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+    const row = document.createElement("div");
+    row.className = "synop-row";
+
+    for (let col = 0; col < 9; col++) {
+      const group = groups[rowIndex * 9 + col];
+      if (!group) continue;
+      row.appendChild(createField(group, utc));
+    }
+
+    rowsContainer.appendChild(row);
+  }
+
+  updatePreview();
+}
+
+function getReport() {
+  const utc = utcSelect.value;
+  const groups = getGroups(utc);
+
+  const firstLineGroups = [];
+  const secondLineGroups = [];
+  let foundIIiii = false;
+
+  for (const group of groups) {
+    const val = String(getGroupValue(group, utc)).trim();
+    if (!val) continue;
+
+    if (group === "IIiii") {
+      foundIIiii = true;
+    }
+
+    if (!foundIIiii) {
+      firstLineGroups.push(val);
+    } else {
+      secondLineGroups.push(val);
+    }
+  }
+
+  let line1 = firstLineGroups.join(" ");
+  let line2 = secondLineGroups.join(" ") + "=";
+
+  return line1 + "\n" + line2;
+}
+
+function getSubject() {
+  let date;
+
+  if (utcSelect.value === "21") {
+    const previousDay = new Date();
+    previousDay.setUTCDate(previousDay.getUTCDate());
+
+    const dd = String(previousDay.getUTCDate()).padStart(2, "0");
+    const mm = String(previousDay.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = previousDay.getUTCFullYear();
+
+    date = `${dd}.${mm}.${yyyy}`;
+  } else {
+    date = getDateText();
+  }
+
+  return `${utcSelect.value}00 UTC SYNOP OF CWC VSK ` +
+    `(43150) DATED ${date}`;
+}
+
+function updatePreview() {
+  document.getElementById("subject").textContent = getSubject();
+  document.getElementById("report").textContent = getReport();
+}
+
+/* Two-Input Calculation Function */
+function calculate(op) {
+  let num1 = parseFloat(document.getElementById("calc-num1").value);
+  let num2 = parseFloat(document.getElementById("calc-num2").value);
+
+  if (isNaN(num1)) num1 = 0;
+  if (isNaN(num2)) num2 = 0;
+
+  let result = 0;
+  if (op === "+") {
+    result = num1 + num2;
+  } else if (op === "-") {
+    result = num1 - num2;
+  }
+
+  result = Math.round(result * 1000000) / 1000000;
+  document.getElementById("calc-result").textContent = `Result: ${result}`;
+}
+
+/* UTC to IST Converter Function */
+function convertTime() {
+  let hhInput = parseInt(document.getElementById("conv-utc-hh").value, 10);
+  let mmInput = parseInt(document.getElementById("conv-utc-mm").value, 10);
+
+  if (isNaN(hhInput)) hhInput = 0;
+  if (isNaN(mmInput)) mmInput = 0;
+
+  let totalMinutes = (hhInput * 60) + mmInput + 330;
+  let dayShiftCount = Math.floor(totalMinutes / 1440);
+  totalMinutes %= 1440;
+  if (totalMinutes < 0) totalMinutes += 1440;
+
+  let istHours = Math.floor(totalMinutes / 60);
+  let istMinutes = totalMinutes % 60;
+
+  let formattedHours = String(istHours).padStart(2, "0");
+  let formattedMinutes = String(istMinutes).padStart(2, "0");
+
+  let dayShiftText = dayShiftCount > 0 ? ` (+${dayShiftCount} Day)` : "";
+  document.getElementById("ist-result").textContent = `${formattedHours}:${formattedMinutes} IST${dayShiftText}`;
+}
+
+/* Image Zoom Modal Functions */
+function openModal() {
+  document.getElementById("imageModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+utcSelect.addEventListener("change", () => {
+  renderForm();
+  document.getElementById("conv-utc-hh").value = utcSelect.value;
+  document.getElementById("conv-utc-mm").value = "00";
+  convertTime();
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  const text = getReport();
+
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("SYNOP report copied.");
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    textarea.remove();
+
+    alert(copied
+      ? "SYNOP report copied."
+      : "Copy failed. Please select and copy the report manually.");
+  }
+});
+
+document.getElementById("gmailBtn").addEventListener("click", () => {
+  const recipients = [
+    "amsschennai@gmail.com",
+    "apdata2021@gmail.com",
+    "MCAMARAVATI.WS@imd.gov.in"
+  ].join(",");
+
+  const url = "https://mail.google.com/mail/?view=cm&fs=1" +
+    "&to=" + encodeURIComponent(recipients) +
+    "&su=" + encodeURIComponent(getSubject()) +
+    "&body=" + encodeURIComponent(getReport());
+
+  window.open(url, "_blank", "noopener");
+});
+
+renderForm();
+convertTime();
+</script>
+
+
+<!-- Rainfall Duration Calculator added below the SYNOP tools -->
+<div id="rainfallTool">
+    <div class="rain-info">Enter time in HHMM format</div>
+
+    <div class="rain-row">
+        <strong>Start Time</strong>
+        <strong>End Time</strong>
+        <strong>Duration</strong>
+    </div>
+
+    <div id="rainPeriods"></div>
+
+    <button type="button" class="add" id="rainAddButton">+ Add Period</button>
+    <button type="button" class="reset" id="rainResetButton">Reset</button>
+
+    <div id="rainOutput"></div>
+</div>
+
+
+<script>
+(() => {
+    // Observation period: today 08:30 to tomorrow 08:30 (IST).
+    const observationStart = 8 * 60 + 30;
+    const observationLength = 1440;
+
+    const tool = document.getElementById("rainfallTool");
+    const periods = tool.querySelector("#rainPeriods");
+    const output = tool.querySelector("#rainOutput");
+
+    function addRainRow() {
+        const row = document.createElement("div");
+        row.className = "rain-row";
+
+        const start = document.createElement("input");
+        start.type = "text";
+        start.className = "start";
+        start.placeholder = "HHMM";
+        start.maxLength = 4;
+        start.inputMode = "numeric";
+        start.autocomplete = "off";
+        start.setAttribute("aria-label", "Rainfall start time");
+
+        const end = document.createElement("input");
+        end.type = "text";
+        end.className = "end";
+        end.placeholder = "HHMM";
+        end.maxLength = 4;
+        end.inputMode = "numeric";
+        end.autocomplete = "off";
+        end.setAttribute("aria-label", "Rainfall end time");
+
+        const duration = document.createElement("input");
+        duration.type = "text";
+        duration.className = "duration";
+        duration.placeholder = "----";
+        duration.readOnly = true;
+        duration.setAttribute("aria-label", "Rainfall duration");
+
+        row.append(start, end, duration);
+        periods.appendChild(row);
+
+        start.addEventListener("input", calculateRainfall);
+        end.addEventListener("input", calculateRainfall);
+    }
+
+    function toMinutes(value) {
+        if (!/^\d{4}$/.test(value)) return null;
+
+        const hours = Number(value.substring(0, 2));
+        const minutes = Number(value.substring(2, 4));
+
+        if (hours > 23 || minutes > 59) return null;
+        return hours * 60 + minutes;
+    }
+
+    function formatDuration(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return String(hours).padStart(2, "0") +
+               String(mins).padStart(2, "0");
+    }
+
+    function getObservationMinute(value) {
+        const minutes = toMinutes(value);
+        if (minutes === null) return null;
+        return (minutes - observationStart + 1440) % 1440;
+    }
+
+    function calculateRainfall() {
+        let total = 0;
+        let error = "";
+        let hasCompletePeriod = false;
+
+        const rows = periods.querySelectorAll(".rain-row");
+
+        rows.forEach((row, index) => {
+            const startText = row.querySelector(".start").value.trim();
+            const endText = row.querySelector(".end").value.trim();
+            const durationInput = row.querySelector(".duration");
+
+            durationInput.value = "";
+
+            if (startText === "" && endText === "") return;
+            if (startText === "" || endText === "") return;
+
+            let start = getObservationMinute(startText);
+            let end = getObservationMinute(endText);
+
+            if (start === null || end === null) {
+                error = "Invalid time in row " + (index + 1) +
+                        ". Enter valid HHMM times.";
+                return;
+            }
+
+            if (end <= start) end += 1440;
+
+            if (end > observationLength) {
+                error = "Row " + (index + 1) +
+                        " is outside the 0830 to next day 0830 observation period.";
+                return;
+            }
+
+            const duration = end - start;
+            durationInput.value = formatDuration(duration);
+            total += duration;
+            hasCompletePeriod = true;
+        });
+
+        if (error) {
+            output.innerHTML = '<p class="error">' + error + '</p>';
+            return;
+        }
+
+        if (total > observationLength) {
+            output.innerHTML =
+                '<p class="error">Total duration exceeds 24 hours. Check the entered periods.</p>';
+            return;
+        }
+
+        if (!hasCompletePeriod) {
+            output.innerHTML = "";
+            return;
+        }
+
+        output.innerHTML = `
+            <div class="result">
+                <div class="total">
+                    Total Rainfall Duration: ${formatDuration(total)}
+                </div>
+            </div>
+        `;
+    }
+
+    tool.querySelector("#rainAddButton").addEventListener("click", addRainRow);
+
+    tool.querySelector("#rainResetButton").addEventListener("click", () => {
+        periods.innerHTML = "";
+        output.innerHTML = "";
+        for (let i = 0; i < 5; i++) addRainRow();
+    });
+
+    for (let i = 0; i < 5; i++) addRainRow();
+})();
+</script>
+
+</body>
+</html>
