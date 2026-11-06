@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Project Index</title>
-
     <script>
         // Simple password protection
         var password = prompt("Enter Password:");
