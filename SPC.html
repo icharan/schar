@@ -1,150 +1,221 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SPL OBS Message Generator - CWCVSK</title>
+
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; padding: 20px; font-family: Arial, sans-serif;
-    background: #f3f5f8; color: #18212f;
-  }
-  .container {
-    max-width: 950px; margin: auto; background: #fff; padding: 24px;
-    border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.08);
-  }
-  h1 { margin: 0 0 8px; font-size: 25px; }
-  .sub { color: #586477; margin: 0 0 22px; }
-  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f3f5f8;
+  color: #18212f;
+}
+
+.container {
+  max-width: 950px;
+  margin: auto;
+  background: #fff;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.08);
+}
+
+h1 { margin: 0 0 8px; font-size: 25px; }
+
+.sub { color: #586477; margin: 0 0 22px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.groups-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #cbd2dc;
+  border-radius: 7px;
+  font: inherit;
+  background: #fff;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #9bbcff;
+  border-color: #356fe0;
+}
+
+.full { grid-column: 1 / -1; }
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  background: #202833;
+}
+
+button:hover { opacity: .9; }
+
+.whatsapp { background: #168a45; }
+.gmail { background: #c53929; }
+.copy { background: #525f70; }
+
+.output {
+  background: #f7f9fc;
+  border: 1px solid #d9e0e9;
+  padding: 14px;
+  border-radius: 9px;
+}
+
+.output h2 {
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.status {
+  min-height: 20px;
+  font-size: 13px;
+  color: #185adb;
+  margin-top: 8px;
+}
+
+.tools-wrapper {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.tool-box {
+  padding: 12px;
+  background: #eaeef2;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  flex: 1;
+  min-width: 260px;
+  max-width: 350px;
+}
+
+.tool-box h3 {
+  font-size: 13px;
+  margin: 0 0 8px;
+  color: #333;
+}
+
+.calc-content {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.calc-row input {
+  padding: 6px;
+  font-size: 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: white;
+  width: 100%;
+}
+
+.calc-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.calc-buttons button {
+  flex: 1;
+  padding: 7px;
+  font-size: 13px;
+  font-weight: bold;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.calc-btn-add { background: #1769aa; }
+.calc-btn-sub { background: #c0392b; }
+
+#calc-result {
+  font-weight: bold;
+  color: #222;
+  background: white;
+  padding: 7px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  text-align: right;
+}
+
+@media (max-width: 800px) {
   .groups-row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
-  input, select, textarea {
-    width: 100%; padding: 11px 12px; border: 1px solid #cbd2dc;
-    border-radius: 7px; font: inherit; background: #fff;
-  }
-  input:focus, select:focus, textarea:focus { outline: 2px solid #9bbcff; border-color: #356fe0; }
-  .full { grid-column: 1 / -1; }
-  .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
-  button {
-    border: 0; border-radius: 8px; padding: 12px 16px; color: #fff;
-    font-weight: 700; cursor: pointer; background: #202833;
-  }
-  button:hover { opacity: .9; }
-  .whatsapp { background: #168a45; }
-  .gmail { background: #c53929; }
-  .copy { background: #525f70; }
-  .output { background: #f7f9fc; border: 1px solid #d9e0e9; padding: 14px; border-radius: 9px; }
-  .output h2 { font-size: 17px; margin: 0 0 10px; }
-  textarea { min-height: 105px; resize: vertical; }
-  .status { min-height: 20px; font-size: 13px; color: #185adb; margin-top: 8px; }
+}
 
-  /* Calculator Tool Styles */
-  .tools-wrapper {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 16px;
-  }
-
-  .tool-box {
-    padding: 12px;
-    background: #eaeef2;
-    border-radius: 8px;
-    border: 1px solid #d0d7de;
-    flex: 1;
-    min-width: 260px;
-    max-width: 350px;
-  }
-
-  .tool-box h3 {
-    font-size: 13px;
-    margin: 0 0 8px 0;
-    color: #333;
-  }
-
-  .calc-content {
-    font-size: 13px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .calc-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .calc-row input {
-    padding: 6px;
-    font-size: 12px;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    background: white;
-    width: 100%;
-  }
-
-  .calc-buttons {
-    display: flex;
-    gap: 6px;
-  }
-
-  .calc-buttons button {
-    flex: 1;
-    padding: 7px;
-    font-size: 13px;
-    font-weight: bold;
-    border: 0;
-    border-radius: 4px;
-    cursor: pointer;
-    color: white;
-  }
-
-  .calc-btn-add {
-    background: #1769aa;
-  }
-
-  .calc-btn-sub {
-    background: #c0392b;
-  }
-
-  .calc-buttons button:hover {
-    filter: brightness(0.9);
-  }
-
-  #calc-result {
-    font-weight: bold;
-    color: #222;
-    background: white;
-    padding: 7px;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    text-align: right;
-  }
-
-  @media (max-width: 800px) {
-    .groups-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (max-width: 600px) {
-    body { padding: 10px; } .container { padding: 16px; }
-    .grid, .groups-row { grid-template-columns: 1fr; } .full { grid-column: auto; }
-    h1 { font-size: 21px; }
-  }
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  .container { padding: 16px; }
+  .grid, .groups-row { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+  h1 { font-size: 21px; }
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
+  <h1>SPL OBS Message Generator</h1>
+
   <div class="grid">
+
     <div>
       <label for="obsDate">Observation date</label>
       <input type="date" id="obsDate" required>
     </div>
+
     <div>
       <label for="obsTime">Observation time (UTC/Z)</label>
       <select id="obsTime">
@@ -167,167 +238,359 @@
       </select>
     </div>
 
-    <!-- All SYNOP groups in a single row with blank placeholders and strict 5-character limit -->
     <div class="groups-row">
+
       <div>
         <label for="Nddff">Nddff</label>
-        <input id="Nddff" value="" placeholder="" maxlength="5" required>
+        <input id="Nddff" maxlength="5" required>
       </div>
+
       <div>
         <label for="PPPW1">PPPW1</label>
-        <input id="PPPW1" value="" placeholder="" maxlength="5" required>
+        <input id="PPPW1" maxlength="5" required>
       </div>
+
       <div>
         <label for="wwRRR">wwRRR</label>
-        <input id="wwRRR" value="" placeholder="" maxlength="5" required>
+        <input id="wwRRR" maxlength="5" required>
       </div>
+
       <div>
         <label for="pressure">59P24P24P24</label>
-        <input id="pressure" value="" placeholder="" maxlength="5" required>
+        <input id="pressure" maxlength="5" required>
       </div>
+
     </div>
 
+    <!-- TOTAL RAINFALL INPUT -->
     <div class="full">
-      <input id="extra">
+      <label for="rainfall">TOTAL RAINFALL (MM)</label>
+      <input
+        type="text"
+        id="rainfall"
+        placeholder="Enter total rainfall in mm"
+      >
     </div>
+
   </div>
 
   <div class="buttons">
-    <button class="copy" type="button" id="copyBtn">Copy Message</button>
-    <button class="whatsapp" type="button" id="waBtn">Open WhatsApp</button>
-    <button class="gmail" type="button" id="gmailBtn">Open Gmail</button>
+
+    <button class="copy" type="button" id="copyBtn">
+      Copy Message
+    </button>
+
+    <button class="whatsapp" type="button" id="waBtn">
+      Open WhatsApp
+    </button>
+
+    <button class="gmail" type="button" id="gmailBtn">
+      Open Gmail
+    </button>
+
   </div>
 
   <div class="output">
+
     <h2>Generated message</h2>
-    <!-- Generated message box is editable -->
+
     <textarea id="message" aria-label="Generated message"></textarea>
-    <!-- Hidden subject input kept for JavaScript automation -->
+
     <input id="subject" readonly style="display:none;">
+
     <div id="status" class="status" role="status"></div>
+
   </div>
 
-  <!-- Quick Calculator Widget -->
+  <!-- QUICK CALCULATOR -->
+
   <div class="tools-wrapper">
+
     <div class="tool-box">
+
       <h3>Quick Calculator (+ / -)</h3>
+
       <div class="calc-content">
+
         <div class="calc-row">
-          <input type="number" id="calc-num1" placeholder="Value 1" value="0">
+          <input type="number" id="calc-num1"
+                 placeholder="Value 1" value="0">
         </div>
+
         <div class="calc-row">
-          <input type="number" id="calc-num2" placeholder="Value 2" value="0">
+          <input type="number" id="calc-num2"
+                 placeholder="Value 2" value="0">
         </div>
+
         <div class="calc-buttons">
-          <button type="button" class="calc-btn-add" onclick="calculate('+')">Add (+)</button>
-          <button type="button" class="calc-btn-sub" onclick="calculate('-')">Subtract (-)</button>
+
+          <button type="button" class="calc-btn-add"
+                  onclick="calculate('+')">
+            Add (+)
+          </button>
+
+          <button type="button" class="calc-btn-sub"
+                  onclick="calculate('-')">
+            Subtract (-)
+          </button>
+
         </div>
-        <!-- Editable result box -->
+
         <input type="text" id="calc-result" value="Result: 0">
+
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
+
 (() => {
+
   const $ = id => document.getElementById(id);
+
   const recipients = [
     "amsschennai@gmail.com",
     "apdata2021@gmail.com",
     "MCAMARAVATI.WS@imd.gov.in"
   ];
 
-  // Default date is today's local date.
+  // SET DEFAULT DATE
+
   const now = new Date();
+
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const dd = String(now.getDate()).padStart(2, "0");
+
   $("obsDate").value = `${yyyy}-${mm}-${dd}`;
 
+  // DATE FORMAT
+
   function dateParts() {
+
     const value = $("obsDate").value;
-    if (!value) throw new Error("Please select an observation date.");
+
+    if (!value) {
+      throw new Error("Please select an observation date.");
+    }
+
     const [year, month, day] = value.split("-").map(Number);
-    return { year, month, day, yy: String(year % 100).padStart(2, "0"),
-      dd: String(day).padStart(2,"0"), display: `${String(day).padStart(2,"0")}.${String(month).padStart(2,"0")}.${year}` };
+
+    return {
+      year,
+      month,
+      day,
+      yy: String(year % 100).padStart(2, "0"),
+      dd: String(day).padStart(2, "0"),
+      display: `${String(day).padStart(2,"0")}.${String(month).padStart(2,"0")}.${year}`
+    };
+
   }
+
+  // GENERATE MESSAGE
 
   function makeMessage() {
+
     const d = dateParts();
+
     const time = $("obsTime").value;
+
     const fields = ["Nddff", "PPPW1", "wwRRR", "pressure"];
+
     const values = fields.map(id => $(id).value.trim());
-    if (values.some(v => !v)) throw new Error("Please fill in all SYNOP groups.");
+
+    if (values.some(v => !v)) {
+      throw new Error("Please fill in all SYNOP groups.");
+    }
+
     const yyggiw = `${d.dd}${time}4`;
+
     const extra = $("extra").value.trim();
-    
-    let mainMsg = `SSSS ${yyggiw} 43150 ${values[0]} ${values[1]} ${values[2]} ${values[3]}=`;
-    let rainfallLine = `TOTAL RAINFALL UPTO ${time}Z: `;
-    
-    const lines = [mainMsg, "", rainfallLine];
-    if (extra) lines.push(extra);
-    
+
+    // GET TOTAL RAINFALL INPUT
+
+    const rainfall = $("rainfall").value.trim();
+
+    // MAIN SYNOP MESSAGE
+
+    const mainMsg =
+      `SSSS ${yyggiw} 43150 ${values[0]} ${values[1]} ${values[2]} ${values[3]}=`;
+
+    // RAINFALL LINE WITH ENTERED VALUE
+
+    const rainfallLine =
+      `TOTAL RAINFALL UPTO ${time}Z: ${rainfall ? rainfall + " MM" : ""}`;
+
+    const lines = [
+      mainMsg,
+      "",
+      rainfallLine
+    ];
+
+    if (extra) {
+      lines.push(extra);
+    }
+
+    // UPDATE GENERATED MESSAGE
+
     $("message").value = lines.join("\n");
-    $("subject").value = `${time}Z SPL OBS CWCVSK43150 DTD:${d.display}`;
+
+    // UPDATE EMAIL SUBJECT
+
+    $("subject").value =
+      `${time}Z SPL OBS CWCVSK 43150 DTD:${d.display}`;
+
+    return $("message").value;
+
   }
 
-  // Enforce maximum 5 characters for group inputs and trigger updates
-  ["Nddff", "PPPW1", "wwRRR", "pressure"].forEach(id => {
+  // LIVE UPDATE FOR SYNOP GROUPS
+
+  ["Nddff", "PPPPW1", "wwRRR", "pressure"].forEach(id => {
+
     const el = $(id);
+
     el.addEventListener("input", () => {
+
       if (el.value.length > 5) {
         el.value = el.value.slice(0, 5);
       }
-      try { makeMessage(); } catch (_) {}
+
+      try {
+        makeMessage();
+      } catch (_) {}
+
     });
+
   });
 
-  // Live updates across remaining inputs/selects
-  ["obsDate", "obsTime", "extra"].forEach(id => {
-    $(id).addEventListener("input", () => { try { makeMessage(); } catch (_) {} });
-    $(id).addEventListener("change", () => { try { makeMessage(); } catch (_) {} });
+  // LIVE UPDATE FOR ALL OTHER INPUTS
+
+  ["obsDate", "obsTime", "extra", "rainfall"].forEach(id => {
+
+    $(id).addEventListener("input", () => {
+      try {
+        makeMessage();
+      } catch (_) {}
+    });
+
+    $(id).addEventListener("change", () => {
+      try {
+        makeMessage();
+      } catch (_) {}
+    });
+
   });
+
+  // COPY MESSAGE
 
   $("copyBtn").addEventListener("click", async () => {
+
     try {
+
+      makeMessage();
+
       await navigator.clipboard.writeText($("message").value);
+
       $("status").textContent = "Message copied to clipboard.";
+
     } catch (e) {
-      $("message").focus(); $("message").select();
-      try { document.execCommand("copy"); $("status").textContent = "Message copied."; }
-      catch (_) { $("status").textContent = "Select the message and copy it manually."; }
+
+      $("message").focus();
+      $("message").select();
+
+      try {
+
+        document.execCommand("copy");
+
+        $("status").textContent = "Message copied.";
+
+      } catch (_) {
+
+        $("status").textContent =
+          "Select the message and copy it manually.";
+
+      }
+
     }
+
   });
+
+  // OPEN WHATSAPP
 
   $("waBtn").addEventListener("click", () => {
+
     try {
-      const text = `${$("subject").value}\n\n${$("message").value}`;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-    } catch (e) { $("status").textContent = e.message; }
+
+      makeMessage();
+
+      const text =
+        `${$("subject").value}\n\n${$("message").value}`;
+
+      const url =
+        `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+      window.open(url, "_blank");
+
+    } catch (e) {
+
+      $("status").textContent = e.message;
+
+    }
+
   });
 
+  // OPEN GMAIL
+
   $("gmailBtn").addEventListener("click", () => {
+
     try {
-      makeMessage(); // Ensures subject uses the selected time and date format
-      const url = "https://mail.google.com/mail/?view=cm&fs=1" +
+
+      makeMessage();
+
+      const url =
+        "https://mail.google.com/mail/?view=cm&fs=1" +
         "&to=" + encodeURIComponent(recipients.join(",")) +
         "&su=" + encodeURIComponent($("subject").value) +
         "&body=" + encodeURIComponent($("message").value);
+
       window.open(url, "_blank");
-    } catch (e) { $("status").textContent = e.message; }
+
+    } catch (e) {
+
+      $("status").textContent = e.message;
+
+    }
+
   });
+
+  // INITIAL MESSAGE
+
+  try {
+    makeMessage();
+  } catch (_) {}
+
 })();
 
-/* Two-Input Calculator Function */
+// TWO-INPUT CALCULATOR
+
 function calculate(op) {
-  let num1 = parseFloat(document.getElementById("calc-num1").value);
-  let num2 = parseFloat(document.getElementById("calc-num2").value);
+
+  let num1 = parseFloat(
+    document.getElementById("calc-num1").value
+  );
+
+  let num2 = parseFloat(
+    document.getElementById("calc-num2").value
+  );
 
   if (isNaN(num1)) num1 = 0;
   if (isNaN(num2)) num2 = 0;
 
   let result = 0;
+
   if (op === "+") {
     result = num1 + num2;
   } else if (op === "-") {
@@ -335,8 +598,13 @@ function calculate(op) {
   }
 
   result = Math.round(result * 1000000) / 1000000;
-  document.getElementById("calc-result").value = `Result: ${result}`;
+
+  document.getElementById("calc-result").value =
+    `Result: ${result}`;
+
 }
+
 </script>
+
 </body>
 </html>
