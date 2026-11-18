@@ -7,7 +7,9 @@
 <title>SPL OBS Message Generator - CWCVSK</title>
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -26,9 +28,15 @@ body {
   box-shadow: 0 4px 18px rgba(0,0,0,.08);
 }
 
-h1 { margin: 0 0 8px; font-size: 25px; }
+h1 {
+  margin: 0 0 8px;
+  font-size: 25px;
+}
 
-.sub { color: #586477; margin: 0 0 22px; }
+.sub {
+  color: #586477;
+  margin: 0 0 22px;
+}
 
 .grid {
   display: grid;
@@ -64,7 +72,9 @@ input:focus, select:focus, textarea:focus {
   border-color: #356fe0;
 }
 
-.full { grid-column: 1 / -1; }
+.full {
+  grid-column: 1 / -1;
+}
 
 .buttons {
   display: flex;
@@ -83,11 +93,21 @@ button {
   background: #202833;
 }
 
-button:hover { opacity: .9; }
+button:hover {
+  opacity: .9;
+}
 
-.whatsapp { background: #168a45; }
-.gmail { background: #c53929; }
-.copy { background: #525f70; }
+.whatsapp {
+  background: #168a45;
+}
+
+.gmail {
+  background: #c53929;
+}
+
+.copy {
+  background: #525f70;
+}
 
 .output {
   background: #f7f9fc;
@@ -174,8 +194,13 @@ textarea {
   color: white;
 }
 
-.calc-btn-add { background: #1769aa; }
-.calc-btn-sub { background: #c0392b; }
+.calc-btn-add {
+  background: #1769aa;
+}
+
+.calc-btn-sub {
+  background: #c0392b;
+}
 
 #calc-result {
   font-weight: bold;
@@ -194,11 +219,25 @@ textarea {
 }
 
 @media (max-width: 600px) {
-  body { padding: 10px; }
-  .container { padding: 16px; }
-  .grid, .groups-row { grid-template-columns: 1fr; }
-  .full { grid-column: auto; }
-  h1 { font-size: 21px; }
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  .grid, .groups-row {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+
+  h1 {
+    font-size: 21px;
+  }
 }
 </style>
 </head>
@@ -208,6 +247,7 @@ textarea {
 <div class="container">
 
   <h1>SPL OBS Message Generator</h1>
+  <p class="sub">CWCVSK - Special Observation Message</p>
 
   <div class="grid">
 
@@ -228,7 +268,7 @@ textarea {
         <option value="10">10Z</option>
         <option value="11">11Z</option>
         <option value="13">13Z</option>
-        <option value="14">14Z</option>
+        <option value="14" selected>14Z</option>
         <option value="16">16Z</option>
         <option value="17">17Z</option>
         <option value="19">19Z</option>
@@ -262,7 +302,6 @@ textarea {
 
     </div>
 
-    <!-- TOTAL RAINFALL INPUT -->
     <div class="full">
       <label for="rainfall">TOTAL RAINFALL (MM)</label>
       <input
@@ -292,9 +331,14 @@ textarea {
 
   <div class="output">
 
-    <h2>Generated message</h2>
+    <h2>Generated Message</h2>
 
-    <textarea id="message" aria-label="Generated message"></textarea>
+    <textarea
+      id="message"
+      aria-label="Generated message"
+      readonly
+      placeholder="Enter all SYNOP groups to generate the message."
+    ></textarea>
 
     <input id="subject" readonly style="display:none;">
 
@@ -313,33 +357,53 @@ textarea {
       <div class="calc-content">
 
         <div class="calc-row">
-          <input type="number" id="calc-num1"
-                 placeholder="Value 1" value="0">
+          <input
+            type="number"
+            id="calc-num1"
+            placeholder="Value 1"
+            value="0"
+          >
         </div>
 
         <div class="calc-row">
-          <input type="number" id="calc-num2"
-                 placeholder="Value 2" value="0">
+          <input
+            type="number"
+            id="calc-num2"
+            placeholder="Value 2"
+            value="0"
+          >
         </div>
 
         <div class="calc-buttons">
 
-          <button type="button" class="calc-btn-add"
-                  onclick="calculate('+')">
+          <button
+            type="button"
+            class="calc-btn-add"
+            onclick="calculate('+')"
+          >
             Add (+)
           </button>
 
-          <button type="button" class="calc-btn-sub"
-                  onclick="calculate('-')">
+          <button
+            type="button"
+            class="calc-btn-sub"
+            onclick="calculate('-')"
+          >
             Subtract (-)
           </button>
 
         </div>
 
-        <input type="text" id="calc-result" value="Result: 0">
+        <input
+          type="text"
+          id="calc-result"
+          value="Result: 0"
+          readonly
+        >
 
       </div>
     </div>
+
   </div>
 
 </div>
@@ -384,7 +448,10 @@ textarea {
       day,
       yy: String(year % 100).padStart(2, "0"),
       dd: String(day).padStart(2, "0"),
-      display: `${String(day).padStart(2,"0")}.${String(month).padStart(2,"0")}.${year}`
+      display:
+        `${String(day).padStart(2, "0")}.` +
+        `${String(month).padStart(2, "0")}.` +
+        `${year}`
     };
 
   }
@@ -397,7 +464,12 @@ textarea {
 
     const time = $("obsTime").value;
 
-    const fields = ["Nddff", "PPPPW1", "wwRRR", "pressure"];
+    const fields = [
+      "Nddff",
+      "PPPPW1",
+      "wwRRR",
+      "pressure"
+    ];
 
     const values = fields.map(id => $(id).value.trim());
 
@@ -407,10 +479,6 @@ textarea {
 
     const yyggiw = `${d.dd}${time}4`;
 
-    const extra = $("extra").value.trim();
-
-    // GET TOTAL RAINFALL INPUT
-
     const rainfall = $("rainfall").value.trim();
 
     // MAIN SYNOP MESSAGE
@@ -418,10 +486,11 @@ textarea {
     const mainMsg =
       `SSSS ${yyggiw} 43150 ${values[0]} ${values[1]} ${values[2]} ${values[3]}=`;
 
-    // RAINFALL LINE WITH ENTERED VALUE
+    // RAINFALL LINE
 
     const rainfallLine =
-      `TOTAL RAINFALL UPTO ${time}Z: ${rainfall ? rainfall + " MM" : ""}`;
+      `TOTAL RAINFALL UPTO ${time}Z: ` +
+      `${rainfall ? rainfall + " MM" : ""}`;
 
     const lines = [
       mainMsg,
@@ -429,15 +498,9 @@ textarea {
       rainfallLine
     ];
 
-    if (extra) {
-      lines.push(extra);
-    }
-
-    // UPDATE GENERATED MESSAGE
-
     $("message").value = lines.join("\n");
 
-    // UPDATE EMAIL SUBJECT
+    // EMAIL SUBJECT
 
     $("subject").value =
       `${time}Z SPL OBS CWCVSK 43150 DTD:${d.display}`;
@@ -446,41 +509,42 @@ textarea {
 
   }
 
-  // LIVE UPDATE FOR SYNOP GROUPS
+  // LIVE UPDATE
+
+  function updateMessage() {
+
+    try {
+      makeMessage();
+      $("status").textContent = "";
+    } catch (e) {
+      $("message").value = "";
+      $("status").textContent = e.message;
+    }
+
+  }
+
+  // SYNOP GROUP INPUTS
 
   ["Nddff", "PPPPW1", "wwRRR", "pressure"].forEach(id => {
 
-    const el = $(id);
+    $(id).addEventListener("input", () => {
 
-    el.addEventListener("input", () => {
-
-      if (el.value.length > 5) {
-        el.value = el.value.slice(0, 5);
+      if ($(id).value.length > 5) {
+        $(id).value = $(id).value.slice(0, 5);
       }
 
-      try {
-        makeMessage();
-      } catch (_) {}
+      updateMessage();
 
     });
 
   });
 
-  // LIVE UPDATE FOR ALL OTHER INPUTS
+  // OTHER INPUTS
 
-  ["obsDate", "obsTime", "extra", "rainfall"].forEach(id => {
+  ["obsDate", "obsTime", "rainfall"].forEach(id => {
 
-    $(id).addEventListener("input", () => {
-      try {
-        makeMessage();
-      } catch (_) {}
-    });
-
-    $(id).addEventListener("change", () => {
-      try {
-        makeMessage();
-      } catch (_) {}
-    });
+    $(id).addEventListener("input", updateMessage);
+    $(id).addEventListener("change", updateMessage);
 
   });
 
@@ -503,9 +567,11 @@ textarea {
 
       try {
 
-        document.execCommand("copy");
+        const success = document.execCommand("copy");
 
-        $("status").textContent = "Message copied.";
+        $("status").textContent = success
+          ? "Message copied."
+          : "Select the message and copy it manually.";
 
       } catch (_) {
 
@@ -556,7 +622,15 @@ textarea {
         "&su=" + encodeURIComponent($("subject").value) +
         "&body=" + encodeURIComponent($("message").value);
 
-      window.open(url, "_blank");
+      const newWindow = window.open(url, "_blank");
+
+      if (!newWindow) {
+        $("status").textContent =
+          "Gmail popup blocked. Please allow pop-ups and try again.";
+      } else {
+        $("status").textContent =
+          "Opening Gmail compose window...";
+      }
 
     } catch (e) {
 
@@ -566,15 +640,13 @@ textarea {
 
   });
 
-  // INITIAL MESSAGE
+  // INITIALIZATION
 
-  try {
-    makeMessage();
-  } catch (_) {}
+  updateMessage();
 
 })();
 
-// TWO-INPUT CALCULATOR
+// QUICK CALCULATOR
 
 function calculate(op) {
 
